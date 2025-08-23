@@ -1,7 +1,7 @@
 package com.miapp.controller;
 
 import com.miapp.repository.ChoferRepository;
-import com.miapp.model.Usuarios.Chofer;
+import com.miapp.model.Usuarios.Transportistas.Chofer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

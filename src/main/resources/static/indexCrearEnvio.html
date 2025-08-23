@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+        /* Utilidad para ocultar/mostrar elementos */
+        .hidden {
+            display: none !important;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        h2 {
+            color: #333;
+            margin-bottom: 0.5em;
+        }
+        p {
+            color: #666;
+            margin: 0.2em 0;
+        }
+        b {
+            color: #333;
+        }
+        #uber-map {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            border-radius: 0;
+            box-shadow: none;
+        }
+        .uber-container, .container {
+            position: relative;
+            z-index: 2;
+        }
+        .uber-container {
+            max-width: 100vw;
+            min-width: 100vw;
+            border-radius: 0;
+            box-shadow: none;
+            padding: 0;
+            display: flex;
+            flex-direction: row;
+            min-height: 100vh;
+        }
+        .shipment-summary {
+            max-width: 520px;
+            margin: 0 auto 1.5em auto;
+        }
+        .uber-btn {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 0.5em;
+            padding: 0.8em 1.2em;
+            font-size: 1em;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .uber-btn:hover {
+            background-color: #1d4ed8;
+        }
+        .searching {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 2s linear infinite;
+            margin-bottom: 0.5em;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .found {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        .transporter-card {
+            width: 320px;
+            margin-bottom: 1em;
+            background: white;
+            border-radius: 1em;
+            padding: 1.2em;
+            box-shadow: 0 2px 8px #0002;
+        }
+        .transporter-card h3 {
+            margin-top: 0;
+            color: #2563eb;
+        }
+        #chatBox {
+            width: 320px;
+            background: #fff;
+            border-radius: 1em;
+            box-shadow: 0 2px 8px #0002;
+            padding: 1em;
+            display: none;
+        }
+        #chatBox div {
+            margin-bottom: 0.5em;
+        }
+        #chatBox .message {
+            background: #e0f2fe;
+            border-radius: 1em;
+            padding: 0.8em 1em;
+            color: #222;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 2em;
+            justify-content: center;
+            align-items: flex-start;
+            margin-top: 2em;
+        }
+        .card {
+            border-radius: 0.5em;
+            overflow: hidden;
+            margin-bottom: 2em;
+        }
+        .card-header {
+            padding: 1em;
+            background: linear-gradient(to right, #2563eb, #2dd4bf);
+            color: white;
+            border-top-left-radius: 0.5em;
+            border-top-right-radius: 0.5em;
+        }
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5em;
+            font-size: 1.25em;
+            font-weight: 600;
+        }
+        .card-content {
+            padding: 1.5em;
+            background: white;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.8em 1.2em;
+            border-radius: 0.5em;
+            font-size: 1em;
+            font-weight: 500;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn-primary {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+        }
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+        .btn-success {
+            background-color: #10b981;
+            color: white;
+            border: none;
+        }
+        .btn-success:hover {
+            background-color: #059669;
+        }
+    </style>
+</head>
+<body>
+<div class="uber-container">
+    <div style="flex:2;">
+        <div class="container" style="display:flex; flex-direction:row; min-height:100vh; align-items:stretch;">
+            <!-- Card Detalle del Envío a la izquierda -->
+            <div style="flex:0 0 420px; max-width:440px; min-width:340px; display:flex; align-items:center; justify-content:center; z-index:2;">
+                <div class="card shadow-2xl border-0 bg-white/90 backdrop-blur" style="width:100%; margin:2em 0;">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <span>📦</span> Detalle del Envío
+                        </div>
+                    </div>
+                    <div class="card-content">
+                        <div style="margin-bottom: 1.5em;">
+                            <div style="font-size:1.08em; color:#0f766e; font-weight:600;">Origen:</div>
+                            <div style="font-size:1.08em; color:#222; margin-bottom:0.5em;"><span id="showOrigin"></span></div>
+                            <div style="font-size:1.08em; color:#2563eb; font-weight:600;">Destino:</div>
+                            <div style="font-size:1.08em; color:#222;"><span id="showDestination"></span></div>
+                        </div>
+                        <ul style="list-style:none; padding-left:0; font-size:1.08em; color:#222;">
+                            <li>Peso: <span id="showWeight"></span> kg</li>
+                            <li>Dimensiones: <span id="showLength"></span>x<span id="showWidth"></span>x<span id="showHeight"></span> cm</li>
+                            <li>Volumen: <span id="showVolume"></span> m³</li>
+                            <li>Distancia: <span id="showDistance"></span> km</li>
+                            <li>Urgente: <span id="showUrgency"></span></li>
+                            <li>Fecha: <span id="showDate"></span></li>
+                        </ul>
+                        <div id="searchStatus" class="searching" style="margin-top:2em;">
+                            <div class="loader" id="loaderSpinner"></div>
+                            <div style="font-size:1.1em; color:#2563eb;">Buscando transportistas cercanos... <span id="countdown">5</span></div>
+                        </div>
+                        <div id="foundTransporter" class="found hidden" style="margin-top:2em;">
+                            <div class="transporter-card">
+                                <div style="display:flex; align-items:center; gap:1em; margin-bottom:1em;">
+                                    <span style="font-size:2em; color:#2563eb;">🚚</span>
+                                    <div style="font-size:1.15em; font-weight:700; color:#0f766e;">Juan Pérez</div>
+                                </div>
+                                <div style="color:#2563eb; font-size:1em; margin-bottom:0.5em;">Renault Kangoo</div>
+                                <div style="font-size:0.98em; color:#222; margin-bottom:0.5em;">Llega en 5 minutos</div>
+                                <button class="btn btn-success btn-large" id="btnChat" style="width:100%; margin-top:1em;">Chatear con Transportista</button>
+                                <div id="chatBox" style="width:100%; padding:1em; margin-top:1em; background:#e0f2fe; border-radius:1em; display:none;">
+                                    <div class="message">Hola buenas, en 5 minutos estaré llegando</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Mapa a la derecha -->
+            <div style="flex:1 1 0; min-width:0; position:relative;">
+                <div id="uber-map" style="position:fixed; top:0; right:0; width:60vw; height:100vh; min-width:480px; z-index:1; border-radius:0; box-shadow:none;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDvT66VQ2YuyfZhp1ymuf8-H_3eo6vT9oU"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const cot = JSON.parse(localStorage.getItem('cotizacionActual'));
+        if (!cot) return;
+        document.getElementById('showOrigin').textContent      = cot.origin;
+        document.getElementById('showDestination').textContent = cot.destination;
+        document.getElementById('showWeight').textContent      = cot.weight;
+        document.getElementById('showLength').textContent      = cot.length;
+        document.getElementById('showWidth').textContent       = cot.width;
+        document.getElementById('showHeight').textContent      = cot.height;
+
+        let volumen = '-';
+        if (cot.length && cot.width && cot.height) {
+            volumen = ((cot.length * cot.width * cot.height) / 1000000).toFixed(3);
+        }
+        document.getElementById('showVolume').textContent   = volumen;
+        document.getElementById('showDistance').textContent = cot.distancia || '-';
+        document.getElementById('showUrgency').textContent  = cot.urgency ? 'Sí' : 'No';
+
+        const fecha = new Date();
+        document.getElementById('showDate').textContent = fecha.toLocaleString();
+
+        if (cot.origin && cot.destination) {
+            mostrarRutaUber(cot.origin, cot.destination);
+        }
+
+        // Lógica de cuenta atrás y toggle
+        let count = 5;
+        const countdownSpan     = document.getElementById('countdown');
+        const searchStatus      = document.getElementById('searchStatus');
+        const foundTransporter  = document.getElementById('foundTransporter');
+        const chatBox           = document.getElementById('chatBox');
+        const btnChat           = document.getElementById('btnChat');
+
+        const interval = setInterval(() => {
+            count--;
+            countdownSpan.textContent = count;
+            if (count === 0) {
+                clearInterval(interval);
+                searchStatus.classList.add('hidden');
+                foundTransporter.classList.remove('hidden');
+            }
+        }, 1000);
+
+        btnChat.addEventListener('click', () => {
+            chatBox.style.display = 'block';
+        });
+    });
+
+    function mostrarRutaUber(origen, destino) {
+        const mapDiv = document.getElementById('uber-map');
+        if (!mapDiv) return;
+        const map = new google.maps.Map(mapDiv, {
+            zoom: 13,
+            center: { lat: -40.8135, lng: -62.9967 },
+            disableDefaultUI: true,
+            draggable: false,
+            zoomControl: false,
+            scrollwheel: false,
+            disableDoubleClickZoom: true,
+            keyboardShortcuts: false,
+            gestureHandling: 'none',
+            styles: [
+                { elementType: 'geometry', stylers: [{ color: '#e9e9e9' }] },
+                { elementType: 'labels', stylers: [{ visibility: 'off' }] },
+                { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#b3c6e4' }] },
+                { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#b3e5fc' }] }
+            ]
+        });
+        const directionsService  = new google.maps.DirectionsService();
+        const directionsRenderer = new google.maps.DirectionsRenderer({ suppressMarkers: true });
+        directionsRenderer.setMap(map);
+        directionsService.route({
+            origin: origen,
+            destination: destino,
+            travelMode: google.maps.TravelMode.DRIVING
+        }, (response, status) => {
+            if (status === 'OK') {
+                directionsRenderer.setDirections(response);
+                const leg = response.routes[0].legs[0];
+                new google.maps.Marker({
+                    position: leg.start_location,
+                    map: map,
+                    icon: { url: 'http://maps.google.com/mapfiles/ms/icons/green-dot.png' },
+                    title: 'Origen'
+                });
+                new google.maps.Marker({
+                    position: leg.end_location,
+                    map: map,
+                    icon: { url: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png' },
+                    title: 'Destino'
+                });
+            }
+        });
+    }
+</script>
+</body>
+</html>

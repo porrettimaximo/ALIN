@@ -1,7 +1,7 @@
 package com.miapp.controller;
 
 
-import com.miapp.model.Usuarios.Chofer;
+import com.miapp.model.Usuarios.Transportistas.Chofer;
 import com.miapp.model.Usuarios.Cliente;
 import com.miapp.repository.ChoferRepository;
 import com.miapp.repository.ClienteRepository;

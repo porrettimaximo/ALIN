@@ -1,6 +1,6 @@
 package com.miapp.model.envio;
 
-import com.miapp.model.Usuarios.Chofer;
+import com.miapp.model.Usuarios.Transportistas.Chofer;
 import com.miapp.model.Usuarios.Cliente;
 import com.miapp.model.cargas.Carga;
 import jakarta.persistence.*;

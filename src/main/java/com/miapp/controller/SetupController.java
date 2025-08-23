@@ -7,7 +7,7 @@ import com.miapp.repository.EnvioRepository;
 import com.miapp.repository.CotizacionRepository;
 import com.miapp.repository.TarifaRepository;
 import com.miapp.model.Usuarios.Cliente;
-import com.miapp.model.Usuarios.Chofer;
+import com.miapp.model.Usuarios.Transportistas.Chofer;
 import com.miapp.model.cargas.Carga;
 import com.miapp.model.envio.Envio;
 import com.miapp.model.cotizacion.Cotizacion;

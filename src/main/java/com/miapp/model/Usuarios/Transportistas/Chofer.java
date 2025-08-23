@@ -1,5 +1,6 @@
-package com.miapp.model.Usuarios;
+package com.miapp.model.Usuarios.Transportistas;
 
+import com.miapp.model.Usuarios.Usuario;
 import jakarta.persistence.*;
 
 @Entity

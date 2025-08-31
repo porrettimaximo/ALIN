@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Transportista</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Panel de Transportista</h1>
+    </header>
+    <main>
+        <section id="assigned-trips">
+            <h2>Viajes Asignados</h2>
+            <ul id="trip-list">
+                <!-- Lista de viajes cargada dinámicamente -->
+            </ul>
+        </section>
+        <section id="driver-profile">
+            <h2>Mi Perfil</h2>
+            <p>Nombre: <span id="driver-name"></span></p>
+            <p>Email: <span id="driver-email"></span></p>
+            <p>Vehículo: <span id="driver-vehicle"></span></p>
+        </section>
+    </main>
+    <script>
+        // Simulación de datos de transportista
+        const driverData = {
+            name: "Carlos Gomez",
+            email: "carlos.gomez@example.com",
+            vehicle: "Camión Mercedes-Benz",
+            trips: [
+                { id: 1, origin: "Buenos Aires", destination: "Rosario", status: "En tránsito" },
+                { id: 2, origin: "Córdoba", destination: "Mendoza", status: "Pendiente" }
+            ]
+        };
+
+        // Cargar datos en el panel
+        document.getElementById("driver-name").textContent = driverData.name;
+        document.getElementById("driver-email").textContent = driverData.email;
+        document.getElementById("driver-vehicle").textContent = driverData.vehicle;
+
+        const tripList = document.getElementById("trip-list");
+        driverData.trips.forEach(trip => {
+            const listItem = document.createElement("li");
+            listItem.textContent = `${trip.origin} → ${trip.destination} (${trip.status})`;
+            tripList.appendChild(listItem);
+        });
+    </script>
+</body>
+</html>

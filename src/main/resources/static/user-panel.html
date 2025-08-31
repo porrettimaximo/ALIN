@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel de Usuario</title>
+    <link rel="stylesheet" href="/css/styles.css">
+</head>
+<body>
+    <header>
+        <h1>Panel de Usuario</h1>
+    </header>
+    <main>
+        <section id="user-shipments">
+            <h2>Mis Envíos</h2>
+            <ul id="shipment-list">
+                <!-- Lista de envíos cargada dinámicamente -->
+            </ul>
+        </section>
+        <section id="user-profile">
+            <h2>Mi Perfil</h2>
+            <p>Nombre: <span id="user-name"></span></p>
+            <p>Email: <span id="user-email"></span></p>
+        </section>
+    </main>
+    <script>
+        // Simulación de datos de usuario
+        const userData = {
+            name: "Juan Perez",
+            email: "juan.perez@example.com",
+            shipments: [
+                { id: 1, origin: "Buenos Aires", destination: "Rosario", status: "En tránsito" },
+                { id: 2, origin: "Córdoba", destination: "Mendoza", status: "Entregado" }
+            ]
+        };
+
+        // Cargar datos en el panel
+        document.getElementById("user-name").textContent = userData.name;
+        document.getElementById("user-email").textContent = userData.email;
+
+        const shipmentList = document.getElementById("shipment-list");
+        userData.shipments.forEach(shipment => {
+            const listItem = document.createElement("li");
+            listItem.textContent = `${shipment.origin} → ${shipment.destination} (${shipment.status})`;
+            shipmentList.appendChild(listItem);
+        });
+    </script>
+</body>
+</html>

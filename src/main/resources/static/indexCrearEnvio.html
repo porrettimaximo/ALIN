@@ -208,6 +208,21 @@
                             <li>Urgente: <span id="showUrgency"></span></li>
                             <li>Fecha: <span id="showDate"></span></li>
                         </ul>
+                        <!-- Negociación de tarifa -->
+                        <div id="negociacion-tarifa" style="margin:2em 0; padding:1em; background:#f8fafc; border-radius:1em;">
+                            <h4 style="font-weight:700; color:#2563eb; margin-bottom:0.7em;">Negociar Tarifa</h4>
+                            <div style="margin-bottom:0.7em;">Tarifa sugerida: <b id="tarifaSugerida"></b></div>
+                            <label for="tarifaPropuesta">Proponer otra tarifa ($):</label>
+                            <input type="number" id="tarifaPropuesta" min="0" step="0.01" style="margin:0.5em 0; padding:0.5em; border-radius:0.5em; border:1px solid #e0e7ef;">
+                            <button class="uber-btn" id="btnProponerTarifa">Enviar propuesta</button>
+                            <div id="respuestaTransportista" style="margin-top:1em; color:#059669; font-weight:600;"></div>
+                            <div id="aceptarTarifaDiv" style="margin-top:1em; display:none;">
+                                <button class="btn btn-success" id="btnAceptarTarifa">Aceptar tarifa y reservar</button>
+                            </div>
+                        </div>
+                        <div style="margin-top:1em; color:#b91c1c; font-size:0.98em;">
+                            <b>Penalización por cancelación:</b> Si cancelas con menos de 12 horas de anticipación, se cobrará un porcentaje acordado por el transportista por movimiento en falso.
+                        </div>
                         <div id="searchStatus" class="searching" style="margin-top:2em;">
                             <div class="loader" id="loaderSpinner"></div>
                             <div style="font-size:1.1em; color:#2563eb;">Buscando transportistas cercanos... <span id="countdown">5</span></div>
@@ -284,6 +299,51 @@
 
         btnChat.addEventListener('click', () => {
             chatBox.style.display = 'block';
+        });
+
+        // Negociación de tarifa
+        const tarifaSugerida = cot.totalCost ? Number(cot.totalCost).toFixed(2) : '0.00';
+        document.getElementById('tarifaSugerida').textContent = `$${tarifaSugerida}`;
+        let tarifaFinal = tarifaSugerida;
+        let estadoNegociacion = 'sugerida';
+        const btnProponerTarifa = document.getElementById('btnProponerTarifa');
+        const tarifaPropuesta = document.getElementById('tarifaPropuesta');
+        const respuestaTransportista = document.getElementById('respuestaTransportista');
+        const aceptarTarifaDiv = document.getElementById('aceptarTarifaDiv');
+        const btnAceptarTarifa = document.getElementById('btnAceptarTarifa');
+
+        btnProponerTarifa.addEventListener('click', () => {
+            const propuesta = tarifaPropuesta.value;
+            if (!propuesta || isNaN(propuesta) || propuesta <= 0) {
+                respuestaTransportista.textContent = 'Ingrese una tarifa válida.';
+                respuestaTransportista.style.color = '#b91c1c';
+                aceptarTarifaDiv.style.display = 'none';
+                return;
+            }
+            // Simulación: el transportista acepta si la propuesta es mayor o igual a la sugerida, si es menor, propone un nuevo valor
+            if (Number(propuesta) >= Number(tarifaSugerida)) {
+                respuestaTransportista.textContent = `El transportista acepta tu tarifa propuesta de $${Number(propuesta).toFixed(2)}.`;
+                respuestaTransportista.style.color = '#059669';
+                tarifaFinal = Number(propuesta).toFixed(2);
+                aceptarTarifaDiv.style.display = 'block';
+                estadoNegociacion = 'aceptada';
+            } else {
+                // El transportista propone un valor intermedio
+                const contraoferta = ((Number(propuesta) + Number(tarifaSugerida)) / 2).toFixed(2);
+                respuestaTransportista.textContent = `El transportista propone una contraoferta de $${contraoferta}. ¿Aceptas?`;
+                respuestaTransportista.style.color = '#eab308';
+                tarifaFinal = contraoferta;
+                aceptarTarifaDiv.style.display = 'block';
+                estadoNegociacion = 'contraoferta';
+            }
+        });
+        btnAceptarTarifa.addEventListener('click', () => {
+            alert(`¡Tarifa final aceptada: $${tarifaFinal}! Se reserva el transporte.`);
+            // Aquí podrías guardar la tarifa final y continuar el flujo de reserva real
+            // Simulación: mostrar transportista asignado
+            searchStatus.classList.add('hidden');
+            foundTransporter.classList.remove('hidden');
+            document.getElementById('negociacion-tarifa').style.display = 'none';
         });
     });
 

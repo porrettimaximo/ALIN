@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="color-scheme" content="dark" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>ALL IN — Plataforma de Gestión de Cargas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root{
+          --bg:#0b0b0c; --bg-2:#0e0f11; --panel:#121214; --panel-2:#17181a;
+          --text:#ececec; --muted:#a8a8ad; --brand:#10b981; --brand-2:#34d399;
+          --blue:#60a5fa; --yellow:#f59e0b; --hair:rgba(255,255,255,.08); --hair-2:rgba(255,255,255,.12);
+          --shadow:0 10px 30px rgba(0,0,0,.35); --radius:16px; --container:1200px;
+        }
+        *{box-sizing:border-box}
+        html,body{height:100%}
+        body{
+          margin:0; background:radial-gradient(1200px 600px at 50% -200px, #101114 10%, transparent 60%), linear-gradient(#0a0a0b, #0e0f11);
+          color:var(--text); font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+          -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+        }
+        a{color:inherit; text-decoration:none}
+        .container{max-width:var(--container); margin:0 auto; padding:0 16px}
+
+        header{position:sticky; top:0; z-index:40; background:rgba(11,11,12,.82); backdrop-filter:saturate(1.15) blur(10px); border-bottom:1px solid var(--hair)}
+        .topbar{display:flex; align-items:center; justify-content:space-between; padding:14px 0}
+        .brand{display:flex; align-items:center; gap:10px; font-family:Sora,Inter; font-weight:900; letter-spacing:.6px; text-transform:uppercase}
+        .brand .dot{width:10px; height:10px; border-radius:50%; background:var(--brand); box-shadow:0 0 24px var(--brand)}
+        .nav{display:flex; gap:10px}
+        .nav a{padding:8px 12px; border:1px solid var(--hair); border-radius:12px; color:var(--muted)}
+        .nav a:hover{background:rgba(255,255,255,.05); color:var(--text)}
+        main{padding:18px 0}
+
+        .hero{text-align:center; padding:8px 0}
+        .hero h2{font-size:clamp(26px,4.3vw,46px); margin:6px 0 8px; letter-spacing:-.03em}
+        .hero p{color:var(--muted)}
+        .pillz{display:flex; gap:10px; justify-content:center; flex-wrap:wrap; margin-top:12px}
+        .pill{display:inline-flex; align-items:center; gap:8px; border:1px solid var(--hair); padding:8px 12px; border-radius:999px; background:rgba(255,255,255,.04)}
+        .icon-min{display:inline-flex; align-items:center; justify-content:center; width:1.55em; height:1.55em; border-radius:50%; background:#0b2419; color:var(--brand)}
+
+        .tabs{margin-top:18px}
+        .tabs-nav{display:grid; grid-template-columns:repeat(3,1fr); gap:8px; background:rgba(255,255,255,.04); border:1px solid var(--hair); padding:8px; border-radius:14px; position:sticky; top:68px; z-index:30}
+        .tab-button{appearance:none; border:0; padding:12px; border-radius:12px; cursor:pointer; background:transparent; color:var(--muted); font-weight:800; display:flex; align-items:center; justify-content:center; gap:8px}
+        .tab-button:hover{background:rgba(255,255,255,.05)}
+        .tab-button.active{background:linear-gradient(90deg,var(--brand) 0%, var(--brand-2) 100%); color:#07130f}
+        .tab-content{display:none; margin-top:14px}
+        .tab-content.active{display:block}
+
+        .card{background:linear-gradient(180deg,var(--panel) 0%, var(--panel-2) 100%); border:1px solid var(--hair); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden}
+        .card-header{padding:16px 18px; border-bottom:1px solid var(--hair); display:flex; align-items:center; justify-content:space-between; gap:10px}
+        .card-title{display:flex; align-items:center; gap:10px; font-weight:900}
+        .card-description{color:var(--muted); font-size:.96rem}
+        .card-content{padding:18px}
+        .muted{color:var(--muted)}
+        .badge{display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; border:1px solid var(--hair); color:var(--muted)}
+
+        .quote-grid{display:grid; grid-template-columns:1.05fr .95fr; gap:16px}
+        @media (max-width: 1024px){ .quote-grid{grid-template-columns:1fr} }
+
+        .form-row,.form-row-4{display:grid; gap:12px}
+        .form-row{grid-template-columns:1fr 1fr}
+        .form-row-4{grid-template-columns:repeat(4,1fr)}
+        @media (max-width: 980px){ .form-row,.form-row-4{grid-template-columns:1fr} }
+        label{display:block; margin:3px 0 8px; color:#cfd3d8; font-weight:700}
+        .in-wrap{position:relative}
+        .in-wrap .prefix{position:absolute; left:10px; top:50%; transform:translateY(-50%); opacity:.6; pointer-events:none}
+        .in-wrap input{padding-left:34px}
+        input,select{width:100%; padding:12px; border-radius:12px; outline:none; background:var(--bg-2); color:var(--text); border:1px solid var(--hair-2)}
+        input::placeholder{color:#9aa0a6}
+        input:focus,select:focus{border-color:#22c55e; box-shadow:0 0 0 3px rgba(34,197,94,.15)}
+        small{color:var(--muted)}
+        .checkbox-label{display:flex; align-items:center; gap:10px; cursor:pointer}
+        .separator{height:1px; background:var(--hair); margin:14px 0}
+        .section-title{font-weight:900; margin:4px 0 8px}
+
+        .alert{border-radius:12px; padding:8px 10px; font-size:.86rem; line-height:1.3}
+        .alert-warning{background:rgba(245,158,11,.10); border:1px solid rgba(245,158,11,.28); color:#fde68a}
+
+        .btn{appearance:none; border:0; border-radius:14px; padding:12px 16px; font-weight:900; cursor:pointer; transition:transform .06s ease, filter .2s ease; display:inline-flex; align-items:center; gap:10px}
+        .btn:active{transform:translateY(1px)}
+        .btn-primary{background:linear-gradient(90deg,var(--brand) 0%, var(--brand-2) 100%); color:#07130f}
+        .btn-outline{background:transparent; color:var(--text); border:1px solid var(--hair-2)}
+        .btn-success{background:linear-gradient(90deg,#22c55e 0%, #86efac 100%); color:#06210f}
+        .btn-large{width:100%; justify-content:center}
+        .btn[disabled]{opacity:.5; cursor:not-allowed; filter:grayscale(20%)}
+        .btn-icon{display:inline-flex; align-items:center; gap:8px}
+
+        .loading-spinner{display:inline-flex; align-items:center; gap:8px}
+        .spinner{width:16px; height:16px; border:2px solid rgba(255,255,255,.25); border-top-color:#22c55e; border-radius:50%; animation:spin .8s linear infinite}
+        @keyframes spin{to{transform:rotate(360deg)}}
+
+        .quote-result .total-price{font-size:2.1rem; font-weight:900}
+        .cost-breakdown{margin-top:10px; background:rgba(255,255,255,.04); border:1px solid var(--hair); border-radius:12px; padding:12px}
+        .breakdown-item{display:flex; align-items:center; justify-content:space-between; padding:8px 0; border-bottom:1px dashed var(--hair)}
+        .breakdown-item:last-child{border-bottom:none}
+
+        .map-card{height:100%; display:flex; flex-direction:column}
+        .map-sticky{position:sticky; top:86px}
+        #map{width:100%; height:560px; border-radius:12px; border:1px solid var(--hair); overflow:hidden}
+        @media (max-width: 640px){ #map{height:460px} .tabs-nav{top:60px} .topbar{padding:10px 0} }
+
+        .cta{position:sticky; bottom:12px; z-index:20; margin-top:20px; display:flex; justify-content:center; pointer-events:none}
+        .cta-inner{pointer-events:auto; background:rgba(11,11,12,.86); border:1px solid var(--hair); backdrop-filter:blur(8px) saturate(1.2); display:flex; gap:10px; padding:10px; border-radius:14px; box-shadow:var(--shadow)}
+        .cta .btn{min-width:210px}
+        @media (max-width:560px){ .cta-inner{width:calc(100% - 24px); margin:0 12px; justify-content:space-between} .cta .btn{min-width:unset; width:48%} }
+    </style>
+</head>
+<body>
+<header>
+    <div class="container">
+        <div class="topbar">
+            <div class="brand"><span class="dot"></span>ALL&nbsp;IN</div>
+            <nav class="nav">
+                <a href="#">Servicios</a><a href="#">Contacto</a><a href="#">Ayuda</a>
+                <a href="/login.html" id="login-link">Iniciar Sesión</a>
+                <a href="#" id="logout-link" style="display:none">Cerrar Sesión</a>
+            </nav>
+        </div>
+    </div>
+</header>
+
+<main class="container">
+    <section class="hero">
+        <h2 style="font-family:Sora,Inter;">Cotizá, reservá y rastreá tu carga en minutos</h2>
+        <p>Gestión inteligente de cargas • <span style="color:var(--brand); font-weight:800">Simple, transparente y 100% online</span></p>
+        <div class="pillz">
+            <span class="pill"><span class="icon-min">✔</span>Sin llamadas ni demoras</span>
+            <span class="pill"><span class="icon-min">⚡</span>Disponibilidad inmediata</span>
+            <span class="pill"><span class="icon-min">💳</span>Pago y reserva digital</span>
+        </div>
+    </section>
+
+    <section class="tabs">
+        <div class="tabs-nav">
+            <button class="tab-button active" data-tab="quote"><span>🧮</span> Nueva Cotización</button>
+            <button class="tab-button" data-tab="tracking"><span>🔎</span> Seguimiento</button>
+            <button class="tab-button" data-tab="drivers"><span>👥</span> Para Transportistas</button>
+        </div>
+
+        <!-- COTIZACIÓN -->
+        <div class="tab-content active" id="quote-tab">
+            <div class="quote-grid">
+                <div>
+                    <div class="card">
+                        <div class="card-header" style="gap:10px; flex-wrap:wrap">
+                            <div class="card-title"><span>🧮</span> Solicitar Cotización</div>
+                            <div class="card-description">Datos del envío • Precio, km y ruta en segundos</div>
+                            <div style="margin-left:auto; display:flex; gap:8px">
+                                <button id="edit-btn" class="btn btn-outline btn-icon" type="button" style="display:none">✏️ Editar datos</button>
+                            </div>
+                        </div>
+                        <div class="card-content">
+                            <form id="quote-form" autocomplete="off">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="origin">Ciudad de Origen *</label>
+                                        <div class="in-wrap"><span class="prefix">📍</span><input type="text" id="origin" placeholder="Ej: Buenos Aires, CABA" required></div>
+                                        <small>Por ciudad, código postal o geolocalización</small>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="destination">Ciudad de Destino *</label>
+                                        <div class="in-wrap"><span class="prefix">🎯</span><input type="text" id="destination" placeholder="Ej: Rosario, Santa Fe" required></div>
+                                        <small>Calculamos la distancia automáticamente</small>
+                                    </div>
+                                </div>
+
+                                <div class="separator"></div>
+
+                                <div class="section">
+                                    <h4 class="section-title">Especificaciones de la carga</h4>
+                                    <div class="form-row-4">
+                                        <div class="form-group">
+                                            <label for="weight">Peso (kg) *</label>
+                                            <input type="number" id="weight" placeholder="3500" min="0" step="0.1" required>
+                                            <small>$0.50 por kg</small>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="length">Largo (cm)</label>
+                                            <input type="number" id="length" placeholder="200" min="0">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="width">Ancho (cm)</label>
+                                            <input type="number" id="width" placeholder="150" min="0">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="height">Alto (cm)</label>
+                                            <input type="number" id="height" placeholder="100" min="0">
+                                        </div>
+                                    </div>
+
+                                    <div id="volume-display" class="alert alert-info" style="display:none">
+                                        <strong>Volumen:</strong> <span id="volume-value">0</span> m³ <span class="muted">• $0.80 por m³</span>
+                                    </div>
+                                </div>
+
+                                <div class="separator"></div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="scheduledDate">Fecha programada</label>
+                                        <input type="date" id="scheduledDate">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="currency">Moneda</label>
+                                        <select id="currency">
+                                            <option value="ARS" selected>ARS</option>
+                                            <option value="USD">USD</option>
+                                            <option value="MXN">MXN</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="pallets">Cantidad de pallets</label>
+                                        <input type="number" id="pallets" placeholder="0" min="0">
+                                        <small>$5.00 por pallet</small>
+                                    </div>
+                                    <div class="form-group" style="display:flex; align-items:flex-end">
+                                        <label class="checkbox-label" style="margin:0">
+                                            <input type="checkbox" id="urgency"> Servicio urgente (+15% sobre costo base)
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div class="alert alert-warning">
+                                    <strong>Importante:</strong> si los datos reales difieren (peso/dimensiones), la tarifa podría ajustarse y re-asignarse el transportista.
+                                </div>
+
+                                <button type="submit" class="btn btn-primary btn-large" id="calculate-btn">
+                                    <span class="btn-text">Obtener cotización, km y ruta</span>
+                                    <div class="loading-spinner" style="display:none"><div class="spinner"></div><span>Calculando…</span></div>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Resultado -->
+                    <div class="card quote-result" id="quote-result" style="display:none; margin-top:16px">
+                        <div class="card-header">
+                            <div class="card-title">Cotización generada</div>
+                            <div class="badge" id="drivers-badge">Buscando transportistas…</div>
+                        </div>
+                        <div class="card-content">
+                            <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; align-items:start">
+                                <div>
+                                    <div class="muted" style="font-weight:700; margin-bottom:4px">Total estimado</div>
+                                    <div class="total-price" id="total-price">$0</div>
+                                    <div class="muted" style="margin-top:4px">Válida por 20 min</div>
+                                </div>
+                                <div>
+                                    <div class="muted" style="font-weight:700; margin-bottom:4px">Distancia</div>
+                                    <div style="font-size:1.3rem; font-weight:800"><span id="distance-km-raw">—</span> km</div>
+                                    <div class="muted">Tiempo estimado: <span id="estimated-days">—</span> días</div>
+                                </div>
+                                <div></div>
+                            </div>
+
+                            <div id="cost-breakdown" class="cost-breakdown" style="display:none; margin-top:12px">
+                                <div class="breakdown-item"><span>Base por distancia</span><span id="distance-cost">$0</span></div>
+                                <div class="breakdown-item"><span>Cargo por peso</span><span id="weight-cost">$0</span></div>
+                                <div class="breakdown-item" id="volume-cost-item" style="display:none"><span>Cargo por volumen</span><span id="volume-cost">$0</span></div>
+                                <div class="breakdown-item" id="pallets-cost-item" style="display:none"><span>Cargo por pallets</span><span id="pallets-cost">$0</span></div>
+                                <div class="breakdown-item" id="urgency-cost-item" style="display:none"><span>Cargo por urgencia</span><span id="urgency-cost">$0</span></div>
+                                <div class="separator"></div>
+                                <div class="breakdown-item" style="font-weight:900"><span>Total</span><span id="breakdown-total">$0</span></div>
+                            </div>
+
+                            <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px">
+                                <button class="btn btn-success btn-large" id="accept-quote" type="button" disabled>Aceptar y reservar viaje</button>
+                                <button class="btn btn-outline btn-large" id="see-full" type="button" disabled>Ver detalle</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Info + Mapa -->
+                <div class="map-card">
+                    <div class="card" style="margin-bottom:16px">
+                        <div class="card-header"><div class="card-title"><span>🛡️</span> ¿Por qué elegir ALL IN?</div></div>
+                        <div class="card-content">
+                            <ul style="list-style:none; padding-left:0; display:grid; gap:10px">
+                                <li class="pill"><span class="icon-min">✓</span> Precios claros y reserva inmediata</li>
+                                <li class="pill"><span class="icon-min">✓</span> Sin llamadas ni demoras</li>
+                                <li class="pill"><span class="icon-min">✓</span> Seguimiento en tiempo real</li>
+                                <li class="pill"><span class="icon-min">✓</span> Red de transportistas verificados</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div id="map-card" class="card map-sticky" style="display:none">
+                        <div class="card-header"><div class="card-title">Ruta • Mapa</div></div>
+                        <div class="card-content" style="padding:12px">
+                            <div id="map"></div>
+                            <div class="muted" id="map-note" style="margin-top:8px">Distancia total: — km</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CTA flotante -->
+            <div class="cta">
+                <div class="cta-inner">
+                    <button class="btn btn-outline" id="see-full-cta" type="button" disabled>Ver detalle</button>
+                    <button class="btn btn-primary" id="accept-quote-cta" type="button" disabled>Confirmar y reservar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRACKING -->
+        <div class="tab-content" id="tracking-tab">
+            <div class="card">
+                <div class="card-header" style="background:linear-gradient(90deg, #2563eb 0%, #0d9488 100%); border:none">
+                    <div class="card-title"><span>🔎</span> Seguimiento de Carga</div>
+                    <p class="card-description">Ingresá tu código de reserva para rastrear tu envío</p>
+                </div>
+                <div class="card-content">
+                    <form id="tracking-form">
+                        <div class="form-group">
+                            <label for="tracking-code">Código de reserva (Ej: ALI-ABC123XYZ)</label>
+                            <input type="text" id="tracking-code" placeholder="ALI-ABC123XYZ" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Rastrear envío</button>
+                    </form>
+                    <div id="tracking-result" style="display:none; margin-top:14px; background:rgba(255,255,255,.04); border:1px solid var(--hair); border-radius:12px; padding:12px"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TRANSPORTISTAS -->
+        <div class="tab-content" id="drivers-tab">
+            <div class="card">
+                <div class="card-header" style="background:linear-gradient(90deg, #10b981 0%, #0ea5e9 100%); border:none">
+                    <div class="card-title"><span>👥</span> Portal para Transportistas</div>
+                    <p class="card-description">Unite a nuestra red digitalizada de transportistas</p>
+                </div>
+                <div class="card-content" style="display:flex; flex-wrap:wrap; gap:18px">
+                    <div style="flex:2; min-width:260px">
+                        <div class="section-title">¿Cómo funciona?</div>
+                        <ol style="list-style:none; padding-left:0; display:grid; gap:10px">
+                            <li class="pill"><span class="icon-min">1</span> Creá tu cuenta y registrá tu vehículo</li>
+                            <li class="pill"><span class="icon-min">2</span> Indicá zonas de cobertura y disponibilidad</li>
+                            <li class="pill"><span class="icon-min">3</span> Aceptá viajes que el sistema te asigna</li>
+                            <li class="pill"><span class="icon-min">4</span> Consultá historial de viajes y pagos</li>
+                        </ol>
+                    </div>
+                    <div style="flex:2; min-width:260px; background:#0b1410; border:1px solid rgba(34,197,94,.25); border-radius:14px; padding:16px">
+                        <div class="section-title">Ventajas</div>
+                        <ul style="list-style:none; padding-left:0; display:grid; gap:10px">
+                            <li class="pill"><span class="icon-min">✔</span> Asignación automática</li>
+                            <li class="pill"><span class="icon-min">✔</span> Pagos garantizados y puntuales</li>
+                            <li class="pill"><span class="icon-min">✔</span> Optimización de rutas</li>
+                            <li class="pill"><span class="icon-min">✔</span> Soporte 24/7</li>
+                        </ul>
+                        <button class="btn btn-success btn-large" style="margin-top:10px">Registrarse como Transportista</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</main>
+
+<!-- Google Maps -->
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAZ1YV3inRT8dZ8QDotDwOnwx-uC8-wmK8&libraries=places"></script>
+<script>
+    const localeByCurrency = { ARS:'es-AR', USD:'en-US', MXN:'es-MX' };
+    const money = (v,c='ARS') => { const loc = localeByCurrency[c] || 'es-AR'; try { return new Intl.NumberFormat(loc,{style:'currency',currency:c}).format(Number(v||0)); } catch { return c+' '+(Number(v||0)).toFixed(2); } };
+    const $ = (sel) => document.querySelector(sel);
+
+    // Tabs
+    document.querySelectorAll('.tab-button').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        document.querySelectorAll('.tab-button').forEach(b=>b.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(btn.dataset.tab+'-tab').classList.add('active');
+      });
+    });
+
+    // Autocomplete
+    let autoO, autoD, originPlace, destPlace;
+    function initPlaces(){
+      if(!google?.maps?.places) return;
+      autoO = new google.maps.places.Autocomplete($('#origin'), { types:['(cities)'] });
+      autoD = new google.maps.places.Autocomplete($('#destination'), { types:['(cities)'] });
+      autoO.addListener('place_changed', ()=> originPlace = autoO.getPlace());
+      autoD.addListener('place_changed', ()=> destPlace = autoD.getPlace());
+    }
+    window.addEventListener('load', initPlaces);
+
+    // Mapa (no interactivo)
+    let map, directionsService, directionsRenderer, startMarker, endMarker;
+    function ensureMap(){
+      if(map) return;
+      map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 6,
+        center: { lat: -34.6037, lng: -58.3816 },
+        styles: [
+          {"elementType":"geometry","stylers":[{"color":"#1b1b1d"}]},
+          {"elementType":"labels.icon","stylers":[{"visibility":"off"}]},
+          {"elementType":"labels.text.fill","stylers":[{"color":"#ffffff"}]}, /* texto general blanco */
+          {"elementType":"labels.text.stroke","stylers":[{"color":"#1b1b1d"}]},
+          {"featureType":"road","elementType":"geometry","stylers":[{"color":"#2a2b2e"}]},
+          {"featureType":"water","elementType":"geometry","stylers":[{"color":"#0f172a"}]}
+        ],
+        disableDefaultUI: true,
+        draggable: false,
+        keyboardShortcuts: false,
+        scrollwheel: false,
+        disableDoubleClickZoom: true,
+        gestureHandling: 'none'
+      });
+      directionsService = new google.maps.DirectionsService();
+      directionsRenderer = new google.maps.DirectionsRenderer({
+        suppressMarkers:true,
+        preserveViewport:false,
+        polylineOptions:{strokeColor:'#34d399', strokeOpacity:0.9, strokeWeight:5}
+      });
+      directionsRenderer.setMap(map);
+    }
+    function clearRoute(){
+      if(directionsRenderer){ directionsRenderer.set('directions', null); }
+      if(startMarker){ startMarker.setMap(null); startMarker=null; }
+      if(endMarker){ endMarker.setMap(null); endMarker=null; }
+    }
+    async function drawRouteAndDistance(origin, destination){
+      ensureMap();
+      clearRoute();
+      await new Promise((resolve) => {
+        directionsService.route({ origin, destination, travelMode: google.maps.TravelMode.DRIVING }, (response, status)=>{
+          if(status === 'OK'){
+            directionsRenderer.setDirections(response);
+            const leg = response.routes[0].legs[0];
+            startMarker = new google.maps.Marker({
+              position: leg.start_location, map,
+              label:{ text:'Origen', color:'#fff', fontWeight:'bold', fontSize:'13px' }, /* BLANCO */
+              icon:{ url:'http://maps.google.com/mapfiles/ms/icons/green-dot.png' }, title: origin
+            });
+            endMarker = new google.maps.Marker({
+              position: leg.end_location, map,
+              label:{ text:'Destino', color:'#fff', fontWeight:'bold', fontSize:'13px' }, /* BLANCO */
+              icon:{ url:'http://maps.google.com/mapfiles/ms/icons/blue-dot.png' }, title: destination
+            });
+          }
+          resolve();
+        });
+      });
+      const km = await getDistanceKm(origin, destination);
+      return (km!=null) ? Math.round(km) : null;
+    }
+    function getDistanceKm(origin, destination){
+      return new Promise((resolve)=>{
+        const svc = new google.maps.DistanceMatrixService();
+        svc.getDistanceMatrix({ origins:[origin], destinations:[destination], travelMode:'DRIVING' },
+          (res, status)=>{
+            if(status!=='OK' || !res?.rows?.[0]?.elements?.[0] || res.rows[0].elements[0].status!=='OK') return resolve(null);
+            resolve(res.rows[0].elements[0].distance.value / 1000);
+          });
+      });
+    }
+
+    // Volumen + pallets mínimos
+    const volumeDisplay = $('#volume-display'), volumeValueEl = $('#volume-value'), palletsInput = $('#pallets');
+    $('#quote-form').addEventListener('input', ()=>{
+      const L = parseFloat($('#length').value)/100 || 0, W = parseFloat($('#width').value)/100  || 0, H = parseFloat($('#height').value)/100 || 0;
+      const V = L*W*H;
+      if(V>0){ volumeDisplay.style.display='block'; volumeValueEl.textContent = V.toFixed(3); } else { volumeDisplay.style.display='none'; volumeValueEl.textContent='0'; }
+      const minPallets = Math.max(0, Math.ceil(V/1.44));
+      const current = parseInt(palletsInput.value)||0; if(current<minPallets) palletsInput.value = minPallets; palletsInput.min = minPallets;
+    });
+
+    // Cotización
+    const RATES = { perKm: 0.0, perKg: 0.50, perM3: 0.80, perPallet: 5.00, urgencyPct: 0.15 };
+    const ui = {
+      calcBtn: $('#calculate-btn'), quoteCard: $('#quote-result'), breakdown: $('#cost-breakdown'),
+      distanceRaw: $('#distance-km-raw'), weightCost: $('#weight-cost'), distanceCost: $('#distance-cost'), volumeItem: $('#volume-cost-item'),
+      volumeCost: $('#volume-cost'), palletsItem: $('#pallets-cost-item'), palletsCost: $('#pallets-cost'), urgencyItem: $('#urgency-cost-item'),
+      urgencyCost: $('#urgency-cost'), totalPrice: $('#total-price'), breakdownTotal: $('#breakdown-total'), estimatedDays: $('#estimated-days'),
+      driversBadge: $('#drivers-badge'),
+      acceptBtn: $('#accept-quote'), seeFullBtn: $('#see-full'),
+      acceptBtnCta: $('#accept-quote-cta'), seeFullBtnCta: $('#see-full-cta'),
+      mapCard: $('#map-card'), mapNote: $('#map-note'),
+      origin: $('#origin'), destination: $('#destination'), editBtn: $('#edit-btn')
+    };
+    function setActionsEnabled(enabled){
+      [ui.acceptBtn, ui.seeFullBtn, ui.acceptBtnCta, ui.seeFullBtnCta].forEach(b=>{ if(b) b.disabled = !enabled; });
+    }
+    function lockAddresses(lock){
+      [ui.origin, ui.destination].forEach(inp=>{
+        inp.readOnly = lock;
+        inp.style.opacity = lock ? .9 : 1;
+        inp.style.filter = lock ? 'grayscale(10%)' : 'none';
+      });
+      ui.editBtn.style.display = lock ? 'inline-flex' : 'none';
+    }
+    setActionsEnabled(false);
+    lockAddresses(false);
+
+    // Botón "Ver detalle" (card y CTA) => abre/cierra desglose y hace scroll
+    function toggleDetalle(){
+      const show = ui.breakdown.style.display === 'none';
+      ui.breakdown.style.display = show ? 'block' : 'none';
+      if(show){
+        ui.quoteCard.scrollIntoView({ behavior:'smooth', block:'start' });
+      }
+    }
+    ui.seeFullBtn.addEventListener('click', toggleDetalle);
+    ui.seeFullBtnCta.addEventListener('click', toggleDetalle);
+
+    // Editar
+    ui.editBtn.addEventListener('click', ()=>{
+      lockAddresses(false);
+      setActionsEnabled(false);
+      ui.quoteCard.style.display = 'none';
+      ui.mapCard.style.display = 'none';
+      ui.breakdown.style.display = 'none';
+      clearRoute();
+    });
+
+    // Submit cotización
+    $('#quote-form').addEventListener('submit', async (e)=>{
+      e.preventDefault();
+      const btnText = ui.calcBtn.querySelector('.btn-text'); const spinner = ui.calcBtn.querySelector('.loading-spinner');
+      btnText.style.display='none'; spinner.style.display='inline-flex';
+
+      const origin = ui.origin.value.trim(); const destination = ui.destination.value.trim();
+      const weight = Number($('#weight').value||0), length = Number($('#length').value||0), width = Number($('#width').value||0), height = Number($('#height').value||0);
+      const scheduledDate = $('#scheduledDate').value || null; const urgency = $('#urgency').checked; const pallets = Number($('#pallets').value||0);
+      const currency = ($('#currency').value||'ARS').toUpperCase();
+
+      // Mapa y km
+      ui.mapCard.style.display = 'block';
+      const kmInt = await drawRouteAndDistance(origin, destination);
+      if(kmInt!=null){ ui.distanceRaw.textContent = kmInt; ui.mapNote.textContent = `Distancia total: ${kmInt} km`; } else { ui.distanceRaw.textContent = '—'; ui.mapNote.textContent = 'No se pudo calcular la distancia.'; }
+
+      // Volumen
+      let volume = 0; if(length>0 && width>0 && height>0){ volume = (length*width*height)/1_000_000; }
+
+      // Costos
+      const distanceCost = (kmInt ? kmInt * RATES.perKm : 0);
+      const weightCost   = weight * RATES.perKg;
+      const volumeCost   = volume>0 ? volume * RATES.perM3 : 0;
+      const palletsCost  = pallets * RATES.perPallet;
+      let subtotal = distanceCost + weightCost + volumeCost + palletsCost;
+      const urgencyCost = urgency ? subtotal * RATES.urgencyPct : 0;
+      const totalEstimate = subtotal + urgencyCost;
+
+      // UI
+      ui.quoteCard.style.display='block';
+      ui.distanceCost.textContent = money(distanceCost, currency);
+      ui.weightCost.textContent   = money(weightCost, currency);
+      if(volume>0){ ui.volumeItem.style.display='flex'; ui.volumeCost.textContent = money(volumeCost, currency); } else { ui.volumeItem.style.display='none'; }
+      if(pallets>0){ ui.palletsItem.style.display='flex'; ui.palletsCost.textContent = money(palletsCost, currency); } else { ui.palletsItem.style.display='none'; }
+      if(urgency){ ui.urgencyItem.style.display='flex'; ui.urgencyCost.textContent = money(urgencyCost, currency); } else { ui.urgencyItem.style.display='none'; }
+      ui.totalPrice.textContent = money(totalEstimate, currency);
+      ui.breakdownTotal.textContent = money(totalEstimate, currency);
+      const etaDays = kmInt ? Math.max(1, Math.round(kmInt/500)) : 1;
+      ui.estimatedDays.textContent = etaDays.toString();
+      ui.driversBadge.textContent = kmInt ? 'Transportistas disponibles en tu zona' : 'Disponibilidad sujeta a validación';
+
+      // Guardar + habilitar
+      const cotizacion = {
+        origin, destination, weight, length, width, height,
+        volume: volume.toFixed(3), distance: kmInt, scheduledDate, urgency, pallets, currency,
+        totalCost: totalEstimate.toFixed(2), iva: 0
+      };
+      localStorage.setItem('cotizacionActual', JSON.stringify(cotizacion));
+      setActionsEnabled(true);
+      lockAddresses(true);
+
+      btnText.style.display=''; spinner.style.display='none';
+    });
+
+    // Acciones: reservar → login
+    const goLogin = () => { window.location.href = '/login.html'; };
+    $('#accept-quote').addEventListener('click', goLogin);
+    $('#accept-quote-cta').addEventListener('click', goLogin);
+
+    // Tracking demo
+    $('#tracking-form').addEventListener('submit', (e)=>{
+      e.preventDefault();
+      const code = document.getElementById('tracking-code').value.trim();
+      const panel = document.getElementById('tracking-result');
+      panel.style.display='block';
+      panel.innerHTML = `<div><strong>Resultado:</strong> Código <code>${code}</code> — <span class="muted">Ejemplo</span></div>
+        <ul style="list-style:none; padding-left:0; display:grid; gap:8px; margin-top:8px">
+          <li class="pill"><span class="icon-min" style="background:#0a1f2a; color:#60a5fa">●</span> Aceptado — Asignando transportista</li>
+          <li class="pill"><span class="icon-min" style="background:#231e0a; color:#f59e0b">●</span> En camino — Desde depósito central</li>
+          <li class="pill"><span class="icon-min" style="background:#0b2419; color:#22c55e">●</span> ETA: 24–48 hs</li>
+        </ul>`;
+    });
+</script>
+</body>
+</html>

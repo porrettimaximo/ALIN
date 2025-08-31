@@ -1,13 +1,16 @@
 package com.miapp;
 
-import com.miapp.controller.SetupController;
-import com.miapp.repository.ClienteRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+import com.miapp.repository.ChoferRepository;
+import com.miapp.repository.ClienteRepository;
+import com.miapp.repository.EnvioRepository;
+import com.miapp.repository.TarifaRepository;
 
 @SpringBootApplication
 @EntityScan(basePackages = {"com.miapp.model"})
@@ -18,12 +21,11 @@ public class DemoApplication {
     }
 
     @Bean
-    public CommandLineRunner runSetup(SetupController setupController, ClienteRepository clienteRepository) {
+    public CommandLineRunner runSetup(DataLoader dataLoader, ClienteRepository clienteRepo, ChoferRepository choferRepo, TarifaRepository tarifaRepo, EnvioRepository envioRepo) {
         return args -> {
-            if (clienteRepository.count() == 0) {
-                setupController.initializeData();
-                System.out.println("Datos de ejemplo inicializados automáticamente.");
-            }
+            System.out.println("Inicializando datos de ejemplo...");
+            dataLoader.initDatabase(clienteRepo, choferRepo, tarifaRepo, envioRepo);
+            System.out.println("Datos inicializados correctamente.");
         };
     }
 }

@@ -24,6 +24,12 @@
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
         <!-- Starter Web: incluye spring‑web, spring‑context, spring‑mvc, Jackson, etc. -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -89,8 +95,7 @@
 
     <build>
         <plugins>
-            <!-- Plugin de Spring Boot: permite correr `mvn spring-boot:run`
-                 y generar un jar ejecutable con `mvn clean package` -->
+
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
@@ -116,7 +121,9 @@
                         </execution>
                     </executions>
                 </plugin>
-            </plugins>
+
+
+        </plugins>
         </build>
 
 

@@ -1,8 +1,8 @@
 package com.miapp.model.tarifas;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Column;
 
 @Entity
 @DiscriminatorValue("KG")
@@ -19,6 +19,11 @@ public class TarifaPorKg extends Tarifa {
         this.peso = peso;
     }
 
+    public TarifaPorKg(String nombre, Double valor) {
+        this.nombre = nombre;
+        this.valor = valor;
+    }
+
     public double calcularTarifaKg() {
         return this.tarifa * this.peso;
     }
@@ -27,4 +32,4 @@ public class TarifaPorKg extends Tarifa {
     public void setTarifa(double tarifa) { this.tarifa = tarifa; }
     public double getPeso() { return peso; }
     public void setPeso(double peso) { this.peso = peso; }
-} 
+}

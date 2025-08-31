@@ -296,11 +296,8 @@
                     localStorage.setItem('user', JSON.stringify(result.user));
                     localStorage.setItem('userType', result.userType);
                     
-                    // Redirect based on user type
-                    const dashboardUrl = result.userType === 'cliente'
-                        ? '/dashboard-cliente.html'
-                        : '/dashboard-chofer.html';
-                    window.location.href = dashboardUrl;
+                    // Redirect to main page
+                    window.location.href = '/';
                 } else {
                     document.getElementById('login-error').textContent = result.message;
                     document.getElementById('login-error').style.display = 'block';

@@ -123,7 +123,7 @@ public class EnvioController {
 
             // Asignar chofer y cambiar estado
             envio.setChofer(chofer);
-            envio.setEstado(EstadoEnvio.EN_CAMINO_A);
+            envio.setEstado(EstadoEnvio.EN_TRANSITO);
             envio.setActualizadoEn(LocalDateTime.now());
             envioRepository.save(envio);
 

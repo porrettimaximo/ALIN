@@ -1,10 +1,23 @@
 package com.miapp.model.envio;
 
-import com.miapp.model.Usuarios.Transportistas.Chofer;
-import com.miapp.model.Usuarios.Cliente;
-import com.miapp.model.cargas.Carga;
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
+
+import com.miapp.model.Usuarios.Cliente;
+import com.miapp.model.Usuarios.Transportistas.Chofer;
+import com.miapp.model.cargas.Carga;
+
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "envio")
@@ -50,6 +63,19 @@ public class Envio {
         this.creadoEn = LocalDateTime.now();
         this.actualizadoEn = LocalDateTime.now();
         this.estado = EstadoEnvio.ACEPTADO;
+    }
+
+    public Envio(String codigoSeguimiento, Cliente cliente, Chofer chofer, Carga carga) {
+        this.codigoSeguimiento = codigoSeguimiento;
+        this.cliente = cliente;
+        this.chofer = chofer;
+        this.carga = carga;
+        this.creadoEn = LocalDateTime.now();
+        this.actualizadoEn = LocalDateTime.now();
+        this.estado = EstadoEnvio.ACEPTADO;
+        this.costoTotal = 0.0; // Asignar un valor predeterminado
+        this.destino = "Destino por defecto"; // Asignar un valor predeterminado
+        this.origen = "Origen por defecto"; // Asignar un valor predeterminado
     }
 
     // Getters y Setters
@@ -99,4 +125,4 @@ public class Envio {
     public void preActualizar() {
         this.actualizadoEn = LocalDateTime.now();
     }
-} 
+}

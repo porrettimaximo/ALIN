@@ -169,6 +169,10 @@ async function handleQuoteSubmission(event) {
     return
   }
 
+  // Incluir el campo pallets en los datos de la cotización
+  const palletsInput = document.getElementById("pallets");
+  quoteData.pallets = Number.parseInt(palletsInput.value) || 0;
+
   currentFormData = quoteData
   await calculateQuote(quoteData)
 }

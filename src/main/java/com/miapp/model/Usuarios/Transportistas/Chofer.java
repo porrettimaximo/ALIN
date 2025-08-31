@@ -1,7 +1,12 @@
 package com.miapp.model.Usuarios.Transportistas;
 
 import com.miapp.model.Usuarios.Usuario;
-import jakarta.persistence.*;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "chofer")
@@ -23,6 +28,21 @@ public class Chofer extends Usuario {
 
     public Chofer(String nombre, String apellido, String email, String telefono, Integer dni, String password, String licencia, String vehiculo) {
         super(nombre, apellido, email, telefono, dni, password);
+        this.licencia = licencia;
+        this.vehiculo = vehiculo;
+    }
+
+    public Chofer(String nombre, String licencia) {
+        super();
+        this.setNombre(nombre);
+        this.licencia = licencia;
+    }
+
+    public Chofer(String nombre, String email, String password, String licencia, String vehiculo) {
+        super();
+        this.setNombre(nombre);
+        this.setEmail(email);
+        this.setPassword(password);
         this.licencia = licencia;
         this.vehiculo = vehiculo;
     }

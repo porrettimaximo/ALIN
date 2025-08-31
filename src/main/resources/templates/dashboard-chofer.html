@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALL IN - Panel del Transportista</title>
+    <link rel="stylesheet" href="/css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <header class="header bg-gradient-to-r from-blue-900 via-blue-800 to-teal-700 text-white shadow-2xl">
+        <div class="container mx-auto px-4 py-6">
+            <div class="header-content flex items-center justify-between">
+                <div class="logo-section flex items-center space-x-4">
+                    <div class="logo-text">
+                        <h1 class="text-4xl font-extrabold tracking-tight" style="font-family: 'Sora', 'Inter', sans-serif; letter-spacing: 0.01em; font-size:2.7rem; color:#fff; text-transform:uppercase;">ALL IN</h1>
+                        <p class="description text-blue-200 text-xs">Logística simple, rápida y digital</p>
+                    </div>
+                </div>
+                <nav class="nav hidden md:flex space-x-8">
+                    <a href="/" class="nav-link hover:text-blue-200 transition-colors font-medium">Inicio</a>
+                    <a href="#" class="nav-link hover:text-blue-200 transition-colors font-medium" id="logout-link">Cerrar Sesión</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8">
+        <h2 class="text-3xl font-extrabold mb-4">Hola, <span id="user-name"></span></h2>
+        <p class="text-lg text-gray-700 mb-6">Este es tu panel de transportista. Aquí podrás ver los viajes asignados y gestionar tu disponibilidad.</p>
+        <div id="chofer-content" class="bg-white p-6 rounded-xl shadow-xl">
+            <p class="text-gray-600">Aún no hay viajes asignados. Mantente atento a nuevas solicitudes.</p>
+        </div>
+    </main>
+
+    <script>
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user) {
+            document.getElementById('user-name').textContent = user.nombre || '';
+        } else {
+            window.location.href = '/login.html';
+        }
+        document.getElementById('logout-link').addEventListener('click', function(e){
+            e.preventDefault();
+            localStorage.clear();
+            window.location.href = '/';
+        });
+    </script>
+</body>
+</html>

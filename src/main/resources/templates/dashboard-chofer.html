@@ -4,48 +4,177 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ALL IN - Panel del Transportista</title>
-    <link rel="stylesheet" href="/css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Sora:wght@800&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
-</head>
+    <style>
+        :root{ --bg:#0b0b0c; --bg-2:#0e0f11; --panel:#121214; --panel-2:#17181a; --text:#ececec; --muted:#a8a8ad; --brand:#10b981; --brand-2:#34d399; --hair:rgba(255,255,255,.08); --hair-2:rgba(255,255,255,.12); --shadow:0 10px 30px rgba(0,0,0,.35); --radius:16px; --container:1200px; }
+        *{box-sizing:border-box}
+        body{margin:0; background:radial-gradient(1200px 600px at 50% -200px, #101114 10%, transparent 60%), linear-gradient(#0a0a0b, #0e0f11); color:var(--text); font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial}
+        a{color:inherit; text-decoration:none}
+        .container{max-width:var(--container); margin:0 auto; padding:0 16px}
+        header{position:sticky; top:0; z-index:40; background:rgba(11,11,12,.82); backdrop-filter:saturate(1.15) blur(10px); border-bottom:1px solid var(--hair)}
+        .topbar{display:flex; align-items:center; justify-content:space-between; padding:14px 0}
+        .brand{display:flex; align-items:center; gap:10px; font-family:Sora,Inter; font-weight:900; letter-spacing:.6px; text-transform:uppercase}
+        .brand .dot{width:10px; height:10px; border-radius:50%; background:var(--brand); box-shadow:0 0 24px var(--brand)}
+        .nav{display:flex; gap:10px}
+        .nav a{padding:8px 12px; border:1px solid var(--hair); border-radius:12px; color:var(--muted)}
+        .nav a:hover{background:rgba(255,255,255,.05); color:var(--text)}
+        main{padding:22px 0}
+        .card{background:linear-gradient(180deg,var(--panel) 0%, var(--panel-2) 100%); border:1px solid var(--hair); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px}
+        .muted{color:var(--muted)}
+        h2{font-family:Sora,Inter; letter-spacing:.3px}
+        .row{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+        @media (max-width: 640px){ .row{grid-template-columns:1fr} }
+        .btn-primary{display:inline-block; padding:8px 12px; border-radius:12px; border:0; cursor:pointer; font-weight:900; background:linear-gradient(90deg,var(--brand) 0%, var(--brand-2) 100%); color:#07130f}
+        /* Mini-mapa con skeleton como en index */
+        .map-box{width:220px; height:100px; border-radius:10px; overflow:hidden; margin-left:auto}
+        .map-skel{width:100%; height:100%; background:linear-gradient(90deg,#1b1c1f 0%,#232528 50%,#1b1c1f 100%); background-size:440px 100%; animation: shimmer 1.4s infinite}
+        @keyframes shimmer{0%{background-position:-220px 0}100%{background-position:220px 0}}
+    </style>
+    <script>
+        // Redirigir si no es chofer
+        document.addEventListener('DOMContentLoaded', function(){
+          const user = JSON.parse(localStorage.getItem('user'));
+          const type = localStorage.getItem('userType');
+          if(!user){ window.location.href = '/login.html'; return; }
+          if(type && type !== 'chofer'){ window.location.href = type === 'cliente' ? '/cliente-dashboard' : '/'; return; }
+          const el = document.getElementById('user-name'); if(el){ el.textContent = user.nombre || ''; }
+        });
+    </script>
+    <script th:inline="javascript">window.GOOGLE_API_KEY = '[[${googleApiKey}]]';</script>
+    </head>
 <body>
-    <header class="header bg-gradient-to-r from-blue-900 via-blue-800 to-teal-700 text-white shadow-2xl">
-        <div class="container mx-auto px-4 py-6">
-            <div class="header-content flex items-center justify-between">
-                <div class="logo-section flex items-center space-x-4">
-                    <div class="logo-text">
-                        <h1 class="text-4xl font-extrabold tracking-tight" style="font-family: 'Sora', 'Inter', sans-serif; letter-spacing: 0.01em; font-size:2.7rem; color:#fff; text-transform:uppercase;">ALL IN</h1>
-                        <p class="description text-blue-200 text-xs">Logística simple, rápida y digital</p>
-                    </div>
-                </div>
-                <nav class="nav hidden md:flex space-x-8">
-                    <a href="/" class="nav-link hover:text-blue-200 transition-colors font-medium">Inicio</a>
-                    <a href="#" class="nav-link hover:text-blue-200 transition-colors font-medium" id="logout-link">Cerrar Sesión</a>
+    <header>
+        <div class="container">
+            <div class="topbar">
+                <div class="brand"><span class="dot"></span>ALL&nbsp;IN</div>
+                <nav class="nav">
+                    <a href="/chofer-dashboard">Inicio</a>
+                    <a href="#" id="logout-link">Cerrar Sesión</a>
                 </nav>
             </div>
         </div>
     </header>
 
-    <main class="container mx-auto px-4 py-8">
-        <h2 class="text-3xl font-extrabold mb-4">Hola, <span id="user-name"></span></h2>
-        <p class="text-lg text-gray-700 mb-6">Este es tu panel de transportista. Aquí podrás ver los viajes asignados y gestionar tu disponibilidad.</p>
-        <div id="chofer-content" class="bg-white p-6 rounded-xl shadow-xl">
-            <p class="text-gray-600">Aún no hay viajes asignados. Mantente atento a nuevas solicitudes.</p>
+    <main class="container">
+        <h2>Hola, <span id="user-name"></span></h2>
+        <p class="muted">Revisa tus viajes y acepta envíos disponibles.</p>
+        <div class="card" style="margin-top:12px">
+            <h3 style="margin:0 0 10px; font-family:Sora,Inter">Mis Envíos</h3>
+            <div id="envios-chofer" class="muted">Cargando envíos...</div>
+        </div>
+        <div class="card" style="margin-top:12px">
+            <h3 style="margin:0 0 10px; font-family:Sora,Inter">Envíos disponibles</h3>
+            <div id="envios-disponibles" class="muted">Buscando envíos disponibles...</div>
         </div>
     </main>
 
     <script>
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (user) {
-            document.getElementById('user-name').textContent = user.nombre || '';
-        } else {
-            window.location.href = '/login.html';
-        }
-        document.getElementById('logout-link').addEventListener('click', function(e){
+        const logout = document.getElementById('logout-link');
+        if (logout){
+          logout.addEventListener('click', function(e){
             e.preventDefault();
-            localStorage.clear();
-            window.location.href = '/';
+            localStorage.clear(); try{ sessionStorage.clear(); }catch(_e){} window.location.replace('/');
+          });
+        }
+
+        async function cargarEnviosChofer(){
+          try{
+            const user = JSON.parse(localStorage.getItem('user'));
+            if(!user || !user.id){ return; }
+            const res = await fetch('/api/envio/chofer/' + user.id);
+            const envios = await res.json();
+            const cont = document.getElementById('envios-chofer');
+            if(!Array.isArray(envios) || envios.length === 0){ cont.textContent = 'No tienes envíos asignados.'; return; }
+            cont.innerHTML = '';
+            envios.forEach(e =>{
+              const wrap = document.createElement('div');
+              wrap.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px;border:1px solid var(--hair);border-radius:12px;margin-bottom:10px';
+              const left = document.createElement('div');
+              const top = document.createElement('div'); top.innerHTML = `<strong>${e.codigoSeguimiento||''}</strong> · <span class="muted">${e.estado||''}</span>`;
+              const sub = document.createElement('div'); sub.className='muted'; sub.innerHTML = `${e.origen} &rarr; ${e.destino}`;
+              left.appendChild(top); left.appendChild(sub);
+              const right = document.createElement('div'); right.style.textAlign='right';
+              const cost = document.createElement('div'); cost.textContent = (e.costoTotal||0).toLocaleString('en-US', {style:'currency', currency:'USD'});
+              if (window.GOOGLE_API_KEY && e.origen && e.destino){
+                const box = document.createElement('div'); box.className='map-box';
+                const sk = document.createElement('div'); sk.className='map-skel'; box.appendChild(sk);
+                const img = document.createElement('img');
+                img.style.cssText='width:100%;height:100%;object-fit:cover;display:block';
+                img.alt = 'Mapa'; img.loading='lazy'; img.decoding='async'; img.referrerPolicy='no-referrer-when-downgrade';
+                img.onload = ()=>{ sk.style.display='none'; };
+                img.onerror = ()=>{ sk.style.display='none'; img.style.display='none'; };
+                img.src = 'https://maps.googleapis.com/maps/api/staticmap?size=320x150&scale=2&maptype=roadmap&markers=color:0x10b981|' + encodeURIComponent(e.origen) + '&markers=color:0xef4444|' + encodeURIComponent(e.destino) + '&key=' + window.GOOGLE_API_KEY;
+                box.appendChild(img);
+                right.appendChild(box);
+              }
+              const link = document.createElement('a'); link.className = 'btn-primary'; link.style.marginTop='6px'; link.href = `/envios/${e.id}`; link.textContent = 'Ver detalles';
+              right.appendChild(cost); right.appendChild(link);
+              wrap.appendChild(left); wrap.appendChild(right);
+              cont.appendChild(wrap);
+            });
+          }catch(err){ console.error(err); document.getElementById('envios-chofer').textContent = 'Error al cargar envíos'; }
+        }
+
+        async function cargarDisponibles(){
+          try{
+            const res = await fetch('/api/envio/disponibles');
+            const envios = await res.json();
+            const cont = document.getElementById('envios-disponibles');
+            if(!Array.isArray(envios) || envios.length === 0){ cont.textContent = 'No hay envíos disponibles en este momento.'; return; }
+            cont.innerHTML = '';
+            envios.forEach(e =>{
+              const wrap = document.createElement('div');
+              wrap.style.cssText = 'display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px;border:1px solid var(--hair);border-radius:12px;margin-bottom:10px';
+              const left = document.createElement('div');
+              const top = document.createElement('div'); top.innerHTML = `<strong>${e.codigoSeguimiento||''}</strong> · <span class="muted">${e.estado||''}</span>`;
+              const sub = document.createElement('div'); sub.className='muted'; sub.innerHTML = `${e.origen} &rarr; ${e.destino}`;
+              left.appendChild(top); left.appendChild(sub);
+              const right = document.createElement('div');
+              const btn = document.createElement('button'); btn.className='btn-primary'; btn.textContent='Aceptar'; btn.addEventListener('click', ()=> aceptarEnvio(e.id));
+              if (window.GOOGLE_API_KEY && e.origen && e.destino){
+                const box = document.createElement('div'); box.className='map-box';
+                const sk = document.createElement('div'); sk.className='map-skel'; box.appendChild(sk);
+                const img = document.createElement('img');
+                img.style.cssText='width:100%;height:100%;object-fit:cover;display:block';
+                img.alt = 'Mapa'; img.loading='lazy'; img.decoding='async'; img.referrerPolicy='no-referrer-when-downgrade';
+                img.onload = ()=>{ sk.style.display='none'; };
+                img.onerror = ()=>{ sk.style.display='none'; img.style.display='none'; };
+                img.src = 'https://maps.googleapis.com/maps/api/staticmap?size=320x150&scale=2&maptype=roadmap&markers=color:0x10b981|' + encodeURIComponent(e.origen) + '&markers=color:0xef4444|' + encodeURIComponent(e.destino) + '&key=' + window.GOOGLE_API_KEY;
+                box.appendChild(img);
+                right.appendChild(box);
+              }
+              const link = document.createElement('a'); link.className='btn-primary'; link.style.marginLeft='6px'; link.href=`/envios/${e.id}`; link.textContent='Ver detalles';
+              right.appendChild(btn); right.appendChild(link);
+              wrap.appendChild(left); wrap.appendChild(right);
+              cont.appendChild(wrap);
+            });
+          }catch(err){ console.error(err); document.getElementById('envios-disponibles').textContent = 'Error al cargar disponibles'; }
+        }
+
+        async function aceptarEnvio(id){
+          try{
+            const user = JSON.parse(localStorage.getItem('user'));
+            const res = await fetch('/api/envio/aceptar/' + id, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ choferId: user.id })});
+            const data = await res.json();
+            if(data && data.success){
+              await cargarDisponibles();
+              await cargarEnviosChofer();
+            } else {
+              alert((data && data.message) || 'No se pudo aceptar el envío');
+            }
+          }catch(err){
+            console.error(err);
+            alert('Error de conexión');
+          }
+        }
+
+        document.addEventListener('DOMContentLoaded', function(){
+          cargarEnviosChofer();
+          cargarDisponibles();
         });
     </script>
 </body>
 </html>
+
+

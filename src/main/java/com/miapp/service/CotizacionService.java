@@ -7,67 +7,83 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.miapp.model.cotizacion.Cotizacion;
+import com.miapp.model.tarifas.TarifaFija;
 import com.miapp.model.tarifas.TarifaPorEspacio;
 import com.miapp.model.tarifas.TarifaPorKg;
 import com.miapp.model.tarifas.TarifaPorKm;
 import com.miapp.model.tarifas.TarifaPorPallet;
 import com.miapp.repository.CotizacionRepository;
+import com.miapp.repository.TarifaRepository;
 
 @Service
 public class CotizacionService {
-    
+
     @Autowired
     private DistanceService distanceService;
     @Autowired
     private CotizacionRepository cotizacionRepository;
-    
+    @Autowired
+    private TarifaRepository tarifaRepository;
+
     public Cotizacion calcularYCotizar(String origen, String destino,
                                        double peso, double largo, double ancho, double alto,
                                        boolean urgente, int pallets) throws Exception {
-
+        // Distancia
         double distancia = distanceService.getDistanceInKm(origen, destino);
 
-        // Crear tarifas
-        TarifaPorKg tarifaKg = new TarifaPorKg(0.50, peso);
-        tarifaKg.setNombre("Tarifa por Kg"); // Asignar nombre
-        tarifaKg.setValor(tarifaKg.calcularTarifaKg());
-        TarifaPorEspacio tarifaEspacio = new TarifaPorEspacio(0.80, new com.miapp.model.cargas.Carga(largo, ancho, alto, peso));
-        tarifaEspacio.setNombre("Tarifa por Espacio"); // Asignar nombre
-        tarifaEspacio.setValor(tarifaEspacio.calcularTarifaEspacio());
-        TarifaPorKm tarifaKm = new TarifaPorKm(0.80, distancia);
-        tarifaKm.setNombre("Tarifa por Km"); // Asignar nombre
-        tarifaKm.setValor(tarifaKm.calcularTarifaKm());
-        
-        if (pallets <= 0) {
-            pallets = 1; // Valor predeterminado
-        }
+        // Tarifas base desde BD (nombre + valor, sin cotización asociada)
+        double perKg      = tarifaRepository.findTopByNombreIgnoreCaseAndCotizacionIsNull("Tarifa por Kg")
+                               .map(t -> t.getValor()).orElse(0.50);
+        double perM3      = tarifaRepository.findTopByNombreIgnoreCaseAndCotizacionIsNull("Tarifa por m3")
+                               .map(t -> t.getValor()).orElse(0.80);
+        double perKm      = tarifaRepository.findTopByNombreIgnoreCaseAndCotizacionIsNull("Tarifa por Km")
+                               .map(t -> t.getValor()).orElse(0.80);
+        double perPallet  = tarifaRepository.findTopByNombreIgnoreCaseAndCotizacionIsNull("Tarifa por Pallets")
+                               .map(t -> t.getValor()).orElse(5.00);
+        double urgencyPct = tarifaRepository.findTopByNombreIgnoreCaseAndCotizacionIsNull("Tarifa Urgencia")
+                               .map(t -> t.getValor()).orElse(0.15);
 
-        TarifaPorPallet tarifaPallet = new TarifaPorPallet("Tarifa por Pallets", 5.00);
-        // Asignar directamente el valor de la tarifa
-        tarifaPallet.setValor(tarifaPallet.getValor());
+        // Cálculos (metros / kg)
+        double volume = Math.max(0.0, largo * ancho * alto);
+        double distVal = Math.max(0.0, perKm * distancia);
+        double weightVal = Math.max(0.0, perKg * peso);
+        double volVal = volume > 0 ? Math.max(0.0, perM3 * volume) : 0.0;
+        double palVal = Math.max(0, pallets) * perPallet;
+        double subtotal = distVal + weightVal + volVal + palVal;
+        double urgVal = urgente ? subtotal * Math.max(0.0, urgencyPct) : 0.0;
 
-        // Validar tarifas
-        if (tarifaKg.getValor() <= 0 || tarifaEspacio.getValor() <= 0 || tarifaKm.getValor() <= 0 || tarifaPallet.getValor() <= 0) {
-            throw new IllegalArgumentException("Las tarifas calculadas deben ser mayores a 0.");
-        }
-
-        // Crear cotización y asociar tarifas
+        // Armar la cotización con desglose
         Cotizacion cotizacion = new Cotizacion();
-        cotizacion.getTarifas().add(tarifaKg);
-        cotizacion.getTarifas().add(tarifaEspacio);
-        cotizacion.getTarifas().add(tarifaKm);
-        cotizacion.getTarifas().add(tarifaPallet);
         cotizacion.setDistancia(distancia);
 
-        // Validar cotización
+        if (distVal > 0){
+            TarifaPorKm t = new TarifaPorKm("Distancia", distVal);
+            t.setCotizacion(cotizacion); cotizacion.getTarifas().add(t);
+        }
+        if (weightVal > 0){
+            TarifaPorKg t = new TarifaPorKg("Peso", weightVal);
+            t.setCotizacion(cotizacion); cotizacion.getTarifas().add(t);
+        }
+        if (volVal > 0){
+            TarifaPorEspacio t = new TarifaPorEspacio("Volumen", volVal);
+            t.setCotizacion(cotizacion); cotizacion.getTarifas().add(t);
+        }
+        if (palVal > 0){
+            TarifaPorPallet t = new TarifaPorPallet("Pallets", palVal);
+            t.setCotizacion(cotizacion); cotizacion.getTarifas().add(t);
+        }
+        if (urgVal > 0){
+            TarifaFija t = new TarifaFija("Urgencia", urgVal);
+            t.setCotizacion(cotizacion); cotizacion.getTarifas().add(t);
+        }
+
         if (cotizacion.getTarifas().isEmpty() || cotizacion.getDistancia() <= 0) {
             throw new IllegalArgumentException("La cotización debe tener tarifas válidas y una distancia mayor a 0.");
         }
 
-
-        return cotizacion;
+        return cotizacionRepository.save(cotizacion);
     }
-    
+
     public Map<String, Object> calcularNuevaCotizacion(String origen, String destino, double precioCombustible) throws Exception {
         double distancia = distanceService.getDistanceInKm(origen, destino);
 
@@ -98,3 +114,4 @@ public class CotizacionService {
         return desglose;
     }
 }
+

@@ -29,7 +29,8 @@ public class Envio {
     @ManyToOne(optional = false)
     private Cliente cliente;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = true)
+    @jakarta.persistence.JoinColumn(name = "chofer_id", nullable = true)
     private Chofer chofer;
 
     @OneToOne(cascade = CascadeType.ALL, optional = false)
@@ -59,10 +60,15 @@ public class Envio {
     private Boolean urgencia;
     private String metodoPago;
 
+    // Detalles opcionales
+    private String detalleOrigen;
+    private String detalleDestino;
+    private String detalleCarga;
+
     public Envio() {
         this.creadoEn = LocalDateTime.now();
         this.actualizadoEn = LocalDateTime.now();
-        this.estado = EstadoEnvio.ACEPTADO;
+        this.estado = EstadoEnvio.EN_ESPERA;
     }
 
     public Envio(String codigoSeguimiento, Cliente cliente, Chofer chofer, Carga carga) {
@@ -72,7 +78,7 @@ public class Envio {
         this.carga = carga;
         this.creadoEn = LocalDateTime.now();
         this.actualizadoEn = LocalDateTime.now();
-        this.estado = EstadoEnvio.ACEPTADO;
+        this.estado = EstadoEnvio.EN_ESPERA;
         this.costoTotal = 0.0; // Asignar un valor predeterminado
         this.destino = "Destino por defecto"; // Asignar un valor predeterminado
         this.origen = "Origen por defecto"; // Asignar un valor predeterminado
@@ -120,6 +126,13 @@ public class Envio {
 
     public String getMetodoPago() { return metodoPago; }
     public void setMetodoPago(String metodoPago) { this.metodoPago = metodoPago; }
+
+    public String getDetalleOrigen() { return detalleOrigen; }
+    public void setDetalleOrigen(String detalleOrigen) { this.detalleOrigen = detalleOrigen; }
+    public String getDetalleDestino() { return detalleDestino; }
+    public void setDetalleDestino(String detalleDestino) { this.detalleDestino = detalleDestino; }
+    public String getDetalleCarga() { return detalleCarga; }
+    public void setDetalleCarga(String detalleCarga) { this.detalleCarga = detalleCarga; }
 
     @PreUpdate
     public void preActualizar() {

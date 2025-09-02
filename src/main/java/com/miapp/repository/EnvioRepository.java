@@ -12,4 +12,5 @@ public interface EnvioRepository extends JpaRepository<Envio, Long> {
     List<Envio> findByEstado(EstadoEnvio estado);
     List<Envio> findByClienteId(Long clienteId);
     List<Envio> findByChoferId(Long choferId);
+    Envio findByCodigoSeguimiento(String codigoSeguimiento);
 } 

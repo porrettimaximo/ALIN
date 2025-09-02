@@ -1,5 +1,6 @@
 package com.miapp.model.Usuarios;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.MappedSuperclass;
 
 @MappedSuperclass
@@ -7,6 +8,7 @@ public abstract class Usuario {
     protected String nombre;
     protected String apellido;
     protected String email;
+    @Column(nullable = false)
     protected String telefono;
     protected Integer dni;
     protected String password;

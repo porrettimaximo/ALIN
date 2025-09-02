@@ -3,6 +3,8 @@ package com.miapp.model.Usuarios.Transportistas;
 import com.miapp.model.Usuarios.Usuario;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -17,6 +19,11 @@ public class Chofer extends Usuario {
 
     private String licencia;
     private String vehiculo;
+
+    public enum Estado { EN_ESPERA, ACEPTADO, RECHAZADO }
+
+    @Enumerated(EnumType.STRING)
+    private Estado estado = Estado.EN_ESPERA;
 
     // Relación con cargas (opcional, si se quiere saber qué cargas transportó)
     // @OneToMany(mappedBy = "chofer")
@@ -53,4 +60,6 @@ public class Chofer extends Usuario {
     public void setLicencia(String licencia) { this.licencia = licencia; }
     public String getVehiculo() { return vehiculo; }
     public void setVehiculo(String vehiculo) { this.vehiculo = vehiculo; }
+    public Estado getEstado() { return estado; }
+    public void setEstado(Estado estado) { this.estado = estado; }
 }

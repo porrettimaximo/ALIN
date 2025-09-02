@@ -64,11 +64,14 @@ public class EnvioController {
             envio.setDestino(request.get("destination").toString());
             envio.setCarga(carga);
             envio.setCliente(cliente);
-            envio.setEstado(EstadoEnvio.ACEPTADO);
+            envio.setEstado(EstadoEnvio.EN_ESPERA);
             envio.setCodigoSeguimiento("ALI- " + System.currentTimeMillis());
             envio.setCostoTotal(Double.parseDouble(request.get("totalCost").toString()));
             envio.setCreadoEn(LocalDateTime.now());
             envio.setMetodoPago(request.get("metodoPago") != null ? request.get("metodoPago").toString() : null);
+            if (request.get("detalleOrigen") != null) envio.setDetalleOrigen(request.get("detalleOrigen").toString());
+            if (request.get("detalleDestino") != null) envio.setDetalleDestino(request.get("detalleDestino").toString());
+            if (request.get("detalleCarga") != null) envio.setDetalleCarga(request.get("detalleCarga").toString());
 
             envioRepository.save(envio);
 
@@ -86,9 +89,22 @@ public class EnvioController {
         }
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getById(@PathVariable Long id) {
+        Optional<Envio> envioOpt = envioRepository.findById(id);
+        if (envioOpt.isPresent()) {
+            return ResponseEntity.ok(envioOpt.get());
+        } else {
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("success", false);
+            resp.put("message", "Envío no encontrado");
+            return ResponseEntity.status(404).body(resp);
+        }
+    }
+
     @GetMapping("/disponibles")
     public ResponseEntity<List<Envio>> getEnviosDisponibles() {
-        List<Envio> envios = envioRepository.findByEstado(EstadoEnvio.ACEPTADO);
+        List<Envio> envios = envioRepository.findByEstado(EstadoEnvio.EN_ESPERA);
         return ResponseEntity.ok(envios);
     }
 
@@ -105,7 +121,7 @@ public class EnvioController {
             }
 
             Envio envio = envioOpt.get();
-            if (envio.getEstado() != EstadoEnvio.ACEPTADO) {
+            if (envio.getEstado() != EstadoEnvio.EN_ESPERA) {
                 response.put("success", false);
                 response.put("message", "El envío ya no está disponible");
                 return ResponseEntity.badRequest().body(response);
@@ -118,6 +134,13 @@ public class EnvioController {
             if (chofer == null) {
                 response.put("success", false);
                 response.put("message", "Chofer no encontrado");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // Validar que el chofer esté aceptado para trabajar
+            if (chofer.getEstado() != com.miapp.model.Usuarios.Transportistas.Chofer.Estado.ACEPTADO) {
+                response.put("success", false);
+                response.put("message", "El chofer aún no está habilitado para trabajar");
                 return ResponseEntity.badRequest().body(response);
             }
 
@@ -180,4 +203,50 @@ public class EnvioController {
             return ResponseEntity.internalServerError().body(response);
         }
     }
-} 
+
+    @PutMapping("/{id}/ruta")
+    public ResponseEntity<Map<String, Object>> actualizarRuta(@PathVariable Long id, @RequestBody Map<String, String> body) {
+        Map<String, Object> resp = new HashMap<>();
+        try {
+            Optional<Envio> envioOpt = envioRepository.findById(id);
+            if (envioOpt.isEmpty()) {
+                resp.put("success", false);
+                resp.put("message", "Envío no encontrado");
+                return ResponseEntity.badRequest().body(resp);
+            }
+            Envio envio = envioOpt.get();
+            String origen = body.get("origen");
+            String destino = body.get("destino");
+            if (origen == null || origen.isBlank() || destino == null || destino.isBlank()) {
+                resp.put("success", false);
+                resp.put("message", "Origen y destino son obligatorios");
+                return ResponseEntity.badRequest().body(resp);
+            }
+            envio.setOrigen(origen);
+            envio.setDestino(destino);
+            envio.setActualizadoEn(LocalDateTime.now());
+            envioRepository.save(envio);
+            resp.put("success", true);
+            return ResponseEntity.ok(resp);
+        } catch (Exception ex) {
+            resp.put("success", false);
+            resp.put("message", "Error actualizando ruta: " + ex.getMessage());
+            return ResponseEntity.internalServerError().body(resp);
+        }
+    }
+
+    @GetMapping("/by-codigo")
+    public ResponseEntity<?> getByCodigo(@RequestParam("code") String code) {
+        Envio e = envioRepository.findByCodigoSeguimiento(code);
+        if (e != null) {
+            Map<String, Object> resp = new HashMap<>();
+            resp.put("success", true);
+            resp.put("id", e.getId());
+            return ResponseEntity.ok(resp);
+        }
+        Map<String, Object> resp = new HashMap<>();
+        resp.put("success", false);
+        resp.put("message", "Código no encontrado");
+        return ResponseEntity.status(404).body(resp);
+    }
+}

@@ -1,51 +1,547 @@
-<!DOCTYPE html>
-<html lang="es">
+﻿<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ALL IN - Panel del Cliente</title>
-    <link rel="stylesheet" href="/css/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Sora:wght@800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ALL IN - Panel del Cliente</title>
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root{ --bg:#0b0b0c; --bg-2:#0e0f11; --panel:#121214; --panel-2:#17181a; --text:#d1d5db; --muted:#9aa0a6; --brand:#10b981; --brand-2:#34d399; --hair:rgba(255,255,255,.08); --hair-2:rgba(255,255,255,.12); --shadow:0 10px 30px rgba(0,0,0,.35); --radius:16px; --container:1200px; }
+    *{box-sizing:border-box}
+    body{margin:0; background:radial-gradient(1200px 600px at 50% -200px, #101114 10%, transparent 60%), linear-gradient(#0a0a0b, #0e0f11); color:var(--text); font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial}
+    a{color:inherit; text-decoration:none}
+    .container{max-width:var(--container); margin:0 auto; padding:0 16px}
+    header{position:sticky; top:0; z-index:40; background:rgba(11,11,12,.82); backdrop-filter:saturate(1.15) blur(10px); border-bottom:1px solid var(--hair)}
+    .topbar{display:flex; align-items:center; justify-content:space-between; padding:14px 0}
+    .brand{display:flex; align-items:center; gap:10px; font-family:Sora,Inter; font-weight:900; letter-spacing:.6px; text-transform:uppercase}
+    .brand .dot{width:10px; height:10px; border-radius:50%; background:var(--brand); box-shadow:0 0 24px var(--brand)}
+    .nav{display:flex; gap:10px}
+    .nav a{padding:8px 12px; border:1px solid var(--hair); border-radius:12px; color:var(--muted)}
+    .nav a:hover{background:rgba(255,255,255,.05); color:var(--text)}
+    main{padding:22px 0}
+    .card{background:linear-gradient(180deg,var(--panel) 0%, var(--panel-2) 100%); border:1px solid var(--hair); border-radius:var(--radius); box-shadow:var(--shadow); padding:18px}
+    .card-header{padding:16px 18px; border-bottom:1px solid var(--hair); display:flex; align-items:center; justify-content:space-between; gap:10px}
+    .card-title{display:flex; align-items:center; gap:10px; font-weight:900}
+    .card-description{color:var(--muted); font-size:.96rem}
+    .muted{color:var(--muted)}
+    .form-row,.form-row-4{display:grid; gap:12px}
+    .form-row{grid-template-columns:1fr 1fr}
+    .form-row-4{grid-template-columns:repeat(4,1fr)}
+    @media (max-width: 980px){ .form-row,.form-row-4{grid-template-columns:1fr} }
+    label{display:block; margin:3px 0 8px; color:#cfd3d8; font-weight:700}
+    .in-wrap{position:relative}
+    /* For Google Places dropdown visibility */
+    .pac-container{z-index:9999 !important}
+    /* Fallback autocomplete dropdown */
+    .ac-list{position:absolute; left:0; right:0; top:100%; background:var(--panel-2); border:1px solid var(--hair); border-top:0; border-radius:0 0 12px 12px; box-shadow:var(--shadow); max-height:240px; overflow:auto; display:none}
+    .ac-item{padding:10px 12px; cursor:pointer; border-top:1px solid var(--hair)}
+    .ac-item:hover{background:rgba(255,255,255,.06)}
+    input,select{width:100%; padding:12px; border-radius:12px; outline:none; background:var(--bg-2); color:var(--text); border:1px solid var(--hair-2)}
+    input::placeholder{color:#9aa0a6}
+    .separator{height:1px; background:var(--hair); margin:14px 0}
+    .section-title{margin:0 0 8px; font-weight:900}
+    .alert{padding:10px 12px; border-radius:10px; margin:10px 0; display:none}
+    .alert-info{display:block; background:rgba(96,165,250,.12); color:#bfdbfe; border:1px solid rgba(96,165,250,.35)}
+    .alert-error{background:rgba(239,68,68,.12); color:#fecaca; border:1px solid rgba(239,68,68,.35)}
+    .btn{display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:10px 14px; border-radius:12px; border:1px solid var(--hair); cursor:pointer; font-weight:900; background:transparent; color:var(--muted)}
+    .btn-primary{background:linear-gradient(90deg,var(--brand) 0%, var(--brand-2) 100%); color:#07130f; border:0}
+    .btn-outline{background:transparent; color:var(--muted)}
+    .btn-large{padding:12px 16px; font-size:1rem}
+    .badge{display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:999px; border:1px solid var(--hair); color:var(--muted)}
+    .cost-breakdown{display:grid; gap:6px}
+    .breakdown-item{display:flex; align-items:center; justify-content:space-between}
+    .total-price{font-size:1.8rem; font-weight:900}
+    .total{display:flex; justify-content:space-between; margin-top:10px; font-weight:900}
+  
+    #map{width:100%; height:420px; border-radius:16px; overflow:hidden}
+    /* Animacion de aparicion hacia abajo */
+    @keyframes slideDownFade {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .animate-in { animation: slideDownFade .35s ease-out both; }
+  </style>
+  <script th:inline="javascript">window.GOOGLE_API_KEY = '[[${googleApiKey}]]';</script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function(){
+      const user = JSON.parse(localStorage.getItem('user'));
+      const type = localStorage.getItem('userType');
+      if(!user){ window.location.href = '/login.html'; return; }
+      if(type && type !== 'cliente'){ window.location.href = type === 'chofer' ? '/chofer-dashboard' : '/'; return; }
+    });
+  </script>
 </head>
 <body>
-    <header class="header bg-gradient-to-r from-blue-900 via-blue-800 to-teal-700 text-white shadow-2xl">
-        <div class="container mx-auto px-4 py-6">
-            <div class="header-content flex items-center justify-between">
-                <div class="logo-section flex items-center space-x-4">
-                    <div class="logo-text">
-                        <h1 class="text-4xl font-extrabold tracking-tight" style="font-family: 'Sora', 'Inter', sans-serif; letter-spacing: 0.01em; font-size:2.7rem; color:#fff; text-transform:uppercase;">ALL IN</h1>
-                        <p class="description text-blue-200 text-xs">Logística simple, rápida y digital</p>
-                    </div>
-                </div>
-                <nav class="nav hidden md:flex space-x-8">
-                    <a href="/" class="nav-link hover:text-blue-200 transition-colors font-medium">Inicio</a>
-                    <a href="#" class="nav-link hover:text-blue-200 transition-colors font-medium" id="logout-link">Cerrar Sesión</a>
-                </nav>
+  <header>
+    <div class="container">
+      <div class="topbar">
+        <div class="brand"><span class="dot"></span>ALL&nbsp;IN</div>
+        <nav class="nav">
+          <a href="/cliente-dashboard">Inicio</a>
+          <a href="/cliente/envios">Mis envios</a>
+          <a href="#" id="logout-link">Cerrar Sesion</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="card" style="margin-top:12px">
+      <div class="card-header" style="background:linear-gradient(90deg, rgba(16,185,129,.18) 0%, rgba(59,130,246,.18) 100%); border:none">
+        <div>
+          <div class="card-title">Tu Panel ALL IN</div>
+          <p class="card-description">Cotiza en segundos, crea envios y gestiona todo desde un solo lugar.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top:12px">
+      <div class="card-header">
+        <div class="card-title">Solicitar Cotizacion</div>
+        <div class="card-description">Datos del envio • Precio, km y ruta en segundos</div>
+      </div>
+      <div class="card-content">
+        <form id="quoteForm" autocomplete="off">
+          <div class="form-row" style="margin-top:6px">
+            <div>
+              <label for="q-origin">Ciudad de Origen *</label>
+              <div class="in-wrap"><input id="q-origin" type="text" placeholder="Ej: Buenos Aires, CABA" required /></div>
+              <small class="muted">Por ciudad, codigo postal o geolocalizacion</small>
             </div>
-        </div>
-    </header>
+            <div>
+              <label for="q-destination">Ciudad de Destino *</label>
+              <div class="in-wrap"><input id="q-destination" type="text" placeholder="Ej: Rosario, Santa Fe" required /></div>
+              <small class="muted">Calculamos la distancia automaticamente</small>
+            </div>
+          </div>
 
-    <main class="container mx-auto px-4 py-8">
-        <h2 class="text-3xl font-extrabold mb-4">Bienvenido, <span id="user-name"></span></h2>
-        <p class="text-lg text-gray-700 mb-6">Este es tu panel de cliente. Aquí podrás gestionar tus envíos y ver el estado de tus reservas.</p>
-        <div id="cliente-content" class="bg-white p-6 rounded-xl shadow-xl">
-            <p class="text-gray-600">Próximamente podrás ver más información sobre tus envíos aquí.</p>
-        </div>
-    </main>
+          <div class="separator"></div>
 
-    <script>
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (user) {
-            document.getElementById('user-name').textContent = user.nombre || '';
-        } else {
-            window.location.href = '/login.html';
+          <div>
+            <h4 class="section-title">Especificaciones de la carga</h4>
+            <div class="form-row-4">
+              <div>
+                <label for="q-weight">Peso (kg) *</label>
+                <input id="q-weight" type="number" step="0.1" min="0" placeholder="3500" required />
+                <small class="muted">$0.50 por kg</small>
+              </div>
+              <div>
+                <label for="q-length">Largo (cm)</label>
+                <input id="q-length" type="number" step="1" min="0" placeholder="120" />
+              </div>
+              <div>
+                <label for="q-width">Ancho (cm)</label>
+                <input id="q-width" type="number" step="1" min="0" placeholder="80" />
+              </div>
+              <div>
+                <label for="q-height">Alto (cm)</label>
+                <input id="q-height" type="number" step="1" min="0" placeholder="100" />
+              </div>
+            </div>
+            <div id="volume-display" class="alert alert-info" style="display:none">
+              <strong>Volumen:</strong> <span id="volume-value">0</span> m3 • Pallets mínimos: <span id="pallets-min">0</span>
+            </div>
+          </div>
+
+          <div class="separator"></div>
+
+          <div class="form-row">
+            <div>
+              <label for="q-date">Fecha programada</label>
+              <input type="date" id="q-date" />
+            </div>
+            
+          </div>
+
+          <div class="form-row">
+            <div>
+              <label for="q-pallets">Cantidad de pallets</label>
+              <input id="q-pallets" type="number" min="0" step="1" placeholder="0" />
+              <small class="muted">$5.00 USD por pallet</small>
+            </div>
+            <div style="display:flex; align-items:flex-end">
+              <label class="checkbox-label" style="margin:0"><input type="checkbox" id="q-urgency"> Servicio urgente (+15%)</label>
+            </div>
+          </div>
+
+          <div class="alert alert-info" style="display:block">
+            <strong>Importante:</strong> si los datos reales difieren (peso/dimensiones), la tarifa podria ajustarse y reasignarse el transportista.
+          </div>
+
+          <button type="submit" class="btn btn-primary btn-large" id="calculate-btn">
+            <span class="btn-text">Obtener cotizacion, km y ruta</span>
+            <div class="loading-spinner" style="display:none"><div class="spinner"></div><span>Calculando…</span></div>
+          </button>
+          
+          <div id="quote-errors" class="alert alert-error"></div>
+          <div id="quote-msg" class="muted"></div>
+        </form>
+      </div>
+    </div>
+
+    <div class="card quote-result" id="quote-result" style="display:none; margin-top:16px">
+      <div class="card-header">
+        <div class="card-title">Cotizacion generada</div>
+        <div class="badge" id="drivers-badge">Buscando transportistas…</div>
+      </div>
+      <div class="card-content">
+        <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; align-items:start">
+          <div>
+            <div class="muted" style="font-weight:700; margin-bottom:4px">Total estimado</div>
+            <div class="total-price" id="total-price">$0 USD</div>
+            <div class="muted" style="margin-top:4px">Valida por 20 min</div>
+          </div>
+          <div>
+            <div class="muted" style="font-weight:700; margin-bottom:4px">Distancia</div>
+            <div style="font-size:1.3rem; font-weight:800"><span id="distance-km-raw">0</span> km</div>
+            <div class="muted">Tiempo estimado: <span id="estimated-days">-</span> dias</div>
+          </div>
+          <div></div>
+        </div>
+        <div style="display:flex; justify-content:flex-end; margin:10px 0 4px">
+          <button type="button" class="btn btn-outline" id="btn-ver-desglose">Ver detalle</button>
+        </div>
+        <div id="cost-breakdown" class="cost-breakdown" style="display:none; margin-top:8px">
+          <div class="breakdown-item"><span>Base por distancia</span><span id="distance-cost">$0</span></div>
+          <div class="breakdown-item"><span>Cargo por peso</span><span id="weight-cost">$0</span></div>
+          <div class="breakdown-item" id="volume-cost-item" style="display:none"><span>Cargo por volumen</span><span id="volume-cost">$0</span></div>
+          <div class="breakdown-item" id="pallets-cost-item" style="display:none"><span>Cargo por pallets</span><span id="pallets-cost">$0</span></div>
+          <div class="breakdown-item" id="urgency-cost-item" style="display:none"><span>Cargo por urgencia</span><span id="urgency-cost">$0</span></div>
+          <div class="separator"></div>
+          <div class="breakdown-item" style="font-weight:900"><span>Total</span><span id="breakdown-total">$0 USD</span></div>
+        </div>
+
+        <details id="optional-details" style="margin-top:12px; border:1px solid var(--hair); border-radius:12px; overflow:hidden">
+          <summary style="cursor:pointer; list-style:none; padding:12px 14px; background:rgba(255,255,255,.04); display:flex; align-items:center; justify-content:space-between">
+            <span class="section-title" style="margin:0">Detalles opcionales</span>
+            <span class="muted" style="font-size:.9rem">Mostrar / ocultar</span>
+          </summary>
+          <div style="padding:12px 14px">
+            <div class="form-row">
+              <div><label for="q-detalle-origen">Detalle de origen</label><textarea id="q-detalle-origen" rows="2" style="width:100%; padding:10px; border-radius:12px; background:var(--bg-2); color:var(--text); border:1px solid var(--hair-2)"></textarea></div>
+              <div><label for="q-detalle-destino">Detalle de destino</label><textarea id="q-detalle-destino" rows="2" style="width:100%; padding:10px; border-radius:12px; background:var(--bg-2); color:var(--text); border:1px solid var(--hair-2)"></textarea></div>
+            </div>
+            <div class="form-row" style="margin-top:6px">
+              <div><label for="q-detalle-carga">Detalle de carga</label><textarea id="q-detalle-carga" rows="2" style="width:100%; padding:10px; border-radius:12px; background:var(--bg-2); color:var(--text); border:1px solid var(--hair-2)"></textarea></div>
+            </div>
+          </div>
+        </details>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:12px">
+          <button class="btn btn-primary btn-large" id="btn-crear-envio" type="button">Crear envio</button>
+          <a class="btn btn-outline btn-large" href="/cliente/envios">Ver mis envios</a>
+        </div>
+      </div>
+    </div>
+      <div id="map-card" class="card" style="display:none; margin-top:16px">
+      <div class="card-header"><div class="card-title">Ruta • Mapa</div></div>
+      <div class="card-content" style="padding:12px">
+        <div id="map"></div>
+        <div class="muted" id="map-note" style="margin-top:8px">Distancia total: - km</div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const logout = document.getElementById('logout-link');
+    if (logout){ logout.addEventListener('click', function(e){ e.preventDefault(); localStorage.clear(); try{ sessionStorage.clear(); }catch(_e){} window.location.replace('/'); }); }
+
+    function setPalletsMin(){
+      const L = parseFloat(document.getElementById('q-length').value)||0;
+      const W = parseFloat(document.getElementById('q-width').value)||0;
+      const H = parseFloat(document.getElementById('q-height').value)||0;
+      // Volumen en m3 (entradas en cm)
+      const V = (L*W*H)/1_000_000;
+      // Volumen de referencia por pallet (Euro pallet 1.2m x 0.8m x 1.0m ≈ 0.96 m3)
+      const PALLET_VOL = 0.96;
+      const palIn = document.getElementById('q-pallets');
+      const volRow = document.getElementById('volume-display');
+      if (V>0){
+        const minPallets = Math.max(1, Math.ceil(V / PALLET_VOL));
+        if (palIn){
+          palIn.min = String(minPallets);
+          const current = parseInt(palIn.value)||0;
+          if(current < minPallets){ palIn.value = String(minPallets); }
         }
-        document.getElementById('logout-link').addEventListener('click', function(e){
-            e.preventDefault();
-            localStorage.clear();
-            window.location.href = '/';
+        if (volRow){
+          volRow.style.display='block';
+          const vv = document.getElementById('volume-value'); if(vv){ vv.textContent = V.toFixed(2); }
+          const pm = document.getElementById('pallets-min'); if(pm){ pm.textContent = String(minPallets); }
+        }
+      } else {
+        if (volRow){ volRow.style.display='none'; }
+      }
+    }
+    ['q-length','q-width','q-height'].forEach(id=>{ const el=document.getElementById(id); if(el){ el.addEventListener('input', setPalletsMin); } });
+
+    document.getElementById('quoteForm').addEventListener('submit', async function(e){
+      e.preventDefault();
+      const user = JSON.parse(localStorage.getItem('user'));
+      if(!user || !user.id){ window.location.href = '/login.html'; return; }
+      const originVal = (document.getElementById('q-origin').value||'').trim();
+      const destVal = (document.getElementById('q-destination').value||'').trim();
+      const payload = {
+        origin: originVal,
+        destination: destVal,
+        weight: parseFloat(document.getElementById('q-weight').value),
+        length: parseFloat(document.getElementById('q-length').value),
+        width: parseFloat(document.getElementById('q-width').value),
+        height: parseFloat(document.getElementById('q-height').value),
+        pallets: parseInt(document.getElementById('q-pallets').value || '0', 10),
+        urgency: !!document.getElementById('q-urgency').checked,
+        scheduledDate: document.getElementById('q-date').value || null,
+        detalleOrigen: (document.getElementById('q-detalle-origen')?.value || ''),
+        detalleDestino: (document.getElementById('q-detalle-destino')?.value || ''),
+        detalleCarga: (document.getElementById('q-detalle-carga')?.value || '')
+      };
+      const msg = document.getElementById('quote-msg');
+      const err = document.getElementById('quote-errors'); if(err){ err.style.display='none'; err.textContent=''; }
+      if(!payload.origin || !payload.destination || isNaN(payload.weight) || payload.weight<=0){
+        if(err){ err.style.display='block'; err.textContent='Completa origen, destino y peso con valores válidos.'; }
+        return;
+      }
+      if(payload.origin.toLowerCase() === payload.destination.toLowerCase()){
+        if(err){ err.style.display='block'; err.textContent='El origen y el destino no pueden ser iguales.'; }
+        return;
+      }
+      try{
+        const calcRes = await fetch('/cotizaciones/calcular', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload) });
+        let cot; try{ cot = await calcRes.json(); }catch(_e){ cot = null; }
+        if(!calcRes.ok || !cot){
+          if(err){ err.style.display='block'; err.textContent = (cot && (cot.message||cot.error)) ? (cot.message||cot.error) : 'No se pudo calcular la cotización. Verifica los datos.'; }
+          return;
+        }
+        let total = 0;
+        const result = document.getElementById('quote-result');
+        const breakdown = document.getElementById('cost-breakdown');
+        const dkmEl = document.getElementById('distance-km-raw');
+        const daysEl = document.getElementById('estimated-days');
+        const totalEl = document.getElementById('total-price');
+        const bTotalEl = document.getElementById('breakdown-total');
+        const setMoney = (el, val) => {
+          if (!el) return;
+          try {
+            const n = Number(val || 0);
+            el.textContent = n.toLocaleString('en-US', {
+              style: 'currency',
+              currency: 'USD',
+              minimumFractionDigits: 0,
+              maximumFractionDigits: 2
+            }) + ' USD';
+          } catch(_e){
+            const n = Number(val||0);
+            const trimmed = n.toFixed(2).replace(/\.00$/,'').replace(/(\.\d)0$/,'$1');
+            el.textContent = '$' + trimmed + ' USD';
+          }
+        }
+        if (cot){
+          if(cot.success===false){ if(err){ err.style.display='block'; err.textContent = cot.message || 'No se pudo calcular la cotización.'; } return; }
+          if (typeof cot.distancia !== 'undefined'){
+            const km = (cot.distancia && cot.distancia.toFixed) ? cot.distancia.toFixed(1) : cot.distancia; if(dkmEl) dkmEl.textContent = km;
+            if(daysEl){ const d = Math.max(1, Math.ceil((parseFloat(km)||0)/600)); daysEl.textContent = String(d); }
+          }
+          if (Array.isArray(cot.tarifas)){
+            let distVal=0, weightVal=0, volVal=0, palVal=0, urgVal=0;
+            cot.tarifas.forEach(t=>{
+              total += (t.valor||0);
+              const name=(t.nombre||'').toLowerCase();
+              if(name.includes('dist')) distVal+=t.valor||0;
+              else if(name.includes('peso')) weightVal+=t.valor||0;
+              else if(name.includes('vol')) volVal+=t.valor||0;
+              else if(name.includes('pallet')) palVal+=t.valor||0;
+              else if(name.includes('urg')) urgVal+=t.valor||0;
+            });
+            breakdown.style.display='grid';
+            setMoney(document.getElementById('distance-cost'), distVal);
+            setMoney(document.getElementById('weight-cost'), weightVal);
+            if(volVal>0){ document.getElementById('volume-cost-item').style.display='flex'; setMoney(document.getElementById('volume-cost'), volVal); }
+            if(palVal>0){ document.getElementById('pallets-cost-item').style.display='flex'; setMoney(document.getElementById('pallets-cost'), palVal); }
+            if(urgVal>0){ document.getElementById('urgency-cost-item').style.display='flex'; setMoney(document.getElementById('urgency-cost'), urgVal); }
+          }
+        }
+        setMoney(totalEl, total); setMoney(bTotalEl, total);
+        result.style.display='block';
+        // Disparar animacion de aparicion
+        try { result.classList.remove('animate-in'); void result.offsetWidth; result.classList.add('animate-in'); } catch(_e){}
+        const mapCard = document.getElementById('map-card'); if(mapCard){ mapCard.style.display='block'; try{ mapCard.classList.remove('animate-in'); void mapCard.offsetWidth; mapCard.classList.add('animate-in'); }catch(_e){} }
+        try {
+          const kmDraw = await drawRouteAndDistance(payload.origin, payload.destination);
+          const note = document.getElementById('map-note');
+          if(note){
+            if(kmDraw!=null){ note.textContent = 'Distancia total: ' + kmDraw + ' km'; }
+            else { note.textContent = 'No se pudo trazar la ruta. Verifica las direcciones ingresadas.'; }
+          }
+        } catch(_e) {
+          const note = document.getElementById('map-note'); if(note){ note.textContent = 'No se pudo cargar el mapa/ruta.'; }
+        }
+        // Abrir detalles opcionales dentro del resultado
+        try{
+          const opt = document.getElementById('optional-details');
+          if(opt){ opt.open = true; }
+        }catch(_e){}
+
+        document.getElementById('btn-crear-envio').onclick = async () => {
+          try{
+            const crearPayload = {
+              origin: payload.origin,
+              destination: payload.destination,
+              weight: payload.weight,
+              length: payload.length,
+              width: payload.width,
+              height: payload.height,
+              clienteId: user.id,
+              totalCost: total,
+              metodoPago: 'pendiente',
+              detalleOrigen: (document.getElementById('q-detalle-origen').value||''),
+              detalleDestino: (document.getElementById('q-detalle-destino').value||''),
+              detalleCarga: (document.getElementById('q-detalle-carga').value||'')
+            };
+            const createRes = await fetch('/api/envio/crear', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(crearPayload) });
+            const createData = await createRes.json();
+            if (createData && createData.success){ window.location.href = '/cliente/envios'; }
+            else { msg.innerHTML = '<span style="color:#fecaca">'+((createData && createData.message) ? createData.message : 'Error al crear el envio')+'</span>'; }
+          }catch(ex){ msg.innerHTML = '<span style="color:#fecaca">Error de conexion</span>'; }
+        };
+      }catch(err){
+        console.error(err);
+        if(err){ const e=document.getElementById('quote-errors'); if(e){ e.style.display='block'; e.textContent='Error al calcular la cotizacion'; } }
+      }
+    });
+
+    function initAutocomplete(){
+      const originInput = document.getElementById('q-origin');
+      const destInput = document.getElementById('q-destination');
+      if (!originInput || !destInput) return;
+      if (!window.google || !google.maps || !google.maps.places) { try{ setupFallbackAutocomplete(originInput, destInput); }catch(e){} return; }
+      const opts = { fields: ['formatted_address','geometry'], types: ['(cities)'] };
+      const a1 = new google.maps.places.Autocomplete(originInput, opts);
+      const a2 = new google.maps.places.Autocomplete(destInput, opts);
+      [originInput, destInput].forEach(inp => { inp.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); } }); });
+    }
+    window.initAutocomplete = initAutocomplete;
+
+    // Fallback autocomplete using backend proxy to Places API
+    function setupFallbackAutocomplete(originInput, destInput){
+      const makeList = (inputEl) => {
+        const wrap = inputEl.closest('.in-wrap') || inputEl.parentElement;
+        let list = wrap.querySelector('.ac-list');
+        if(!list){ list = document.createElement('div'); list.className='ac-list'; wrap.appendChild(list); }
+        return list;
+      };
+      const debounce = (fn, ms=250) => { let t; return (...args)=>{ clearTimeout(t); t=setTimeout(()=>fn(...args), ms); }; };
+      const attach = (inputEl) => {
+        const list = makeList(inputEl);
+        const hide = ()=>{ list.style.display='none'; list.innerHTML=''; };
+        document.addEventListener('click', (ev)=>{ if(!wrapContains(list, ev.target) && ev.target!==inputEl){ hide(); } });
+        inputEl.addEventListener('focus', ()=>{ if(list.children.length>0) list.style.display='block'; });
+        inputEl.addEventListener('input', debounce(async ()=>{
+          const q = inputEl.value.trim();
+          if(q.length < 3){ hide(); return; }
+          try{
+            const res = await fetch('/cotizaciones/api/places/autocomplete?input=' + encodeURIComponent(q));
+            const txt = await res.text();
+            const arr = JSON.parse(txt);
+            list.innerHTML='';
+            (arr||[]).slice(0,8).forEach(p=>{
+              const d = p.description || p.structured_formatting?.main_text || '';
+              if(!d) return;
+              const item = document.createElement('div'); item.className='ac-item'; item.textContent = d;
+              item.addEventListener('click', ()=>{ inputEl.value = d; hide(); });
+              list.appendChild(item);
+            });
+            list.style.display = list.children.length>0 ? 'block' : 'none';
+          }catch(e){ hide(); }
+        }, 280));
+      };
+      const wrapContains = (container, el) => { try{ return container.contains(el); }catch(_){ return false; } };
+      attach(originInput); attach(destInput);
+    }
+  
+  // Mapa interactivo como en index
+  let map, directionsService, directionsRenderer, startMarker, endMarker;
+  function ensureMap(){
+    if(map) return;
+    map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 6,
+      center: { lat: -34.6037, lng: -58.3816 },
+      styles: [
+        {elementType:'geometry',stylers:[{color:'#1b1b1d'}]},
+        {elementType:'labels.icon',stylers:[{visibility:'off'}]},
+        {elementType:'labels.text.fill',stylers:[{color:'#ffffff'}]},
+        {elementType:'labels.text.stroke',stylers:[{color:'#1b1b1d'}]},
+        {featureType:'road',elementType:'geometry',stylers:[{color:'#2a2b2e'}]},
+        {featureType:'water',elementType:'geometry',stylers:[{color:'#0f172a'}]}
+      ],
+      disableDefaultUI:true,
+      draggable:false,
+      keyboardShortcuts:false,
+      scrollwheel:false,
+      disableDoubleClickZoom:true,
+      gestureHandling:'none'
+    });
+    directionsService = new google.maps.DirectionsService();
+    directionsRenderer = new google.maps.DirectionsRenderer({
+      suppressMarkers:true,
+      preserveViewport:false,
+      polylineOptions:{strokeColor:'#34d399', strokeOpacity:0.9, strokeWeight:5}
+    });
+    directionsRenderer.setMap(map);
+  }
+  function clearRoute(){
+    if(directionsRenderer){ directionsRenderer.set('directions', null); }
+    if(startMarker){ startMarker.setMap(null); startMarker=null; }
+    if(endMarker){ endMarker.setMap(null); endMarker=null; }
+  }
+  async function drawRouteAndDistance(origin, destination){
+    ensureMap();
+    clearRoute();
+    await new Promise((resolve)=>{
+      directionsService.route({ origin, destination, travelMode: google.maps.TravelMode.DRIVING }, (response, status)=>{
+        if(status==='OK'){
+          directionsRenderer.setDirections(response);
+          const leg = response.routes[0].legs[0];
+          startMarker = new google.maps.Marker({ position: leg.start_location, map, label:{ text:'Origen', color:'#fff', fontWeight:'bold', fontSize:'13px' }, icon:{ url:'http://maps.google.com/mapfiles/ms/icons/green-dot.png' }, title: origin });
+          endMarker = new google.maps.Marker({ position: leg.end_location, map, label:{ text:'Destino', color:'#fff', fontWeight:'bold', fontSize:'13px' }, icon:{ url:'http://maps.google.com/mapfiles/ms/icons/blue-dot.png' }, title: destination });
+        }
+        resolve();
+      });
+    });
+    const km = await getDistanceKm(origin, destination);
+    return (km!=null) ? Math.round(km) : null;
+  }
+  function getDistanceKm(origin, destination){
+    return new Promise((resolve)=>{
+      const svc = new google.maps.DistanceMatrixService();
+      svc.getDistanceMatrix({ origins:[origin], destinations:[destination], travelMode:'DRIVING' }, (res, status)=>{
+        if(status!=='OK' || !res?.rows?.[0]?.elements?.[0] || res.rows[0].elements[0].status!=='OK') return resolve(null);
+        resolve(res.rows[0].elements[0].distance.value/1000);
+      });
+    });
+  }
+  // Toggle breakdown visibility
+  (function(){
+    try{
+      const btn = document.getElementById('btn-ver-desglose');
+      const bd = document.getElementById('cost-breakdown');
+      if(btn && bd){
+        btn.addEventListener('click', function(){
+          const show = (bd.style.display === 'none' || bd.style.display === '');
+          bd.style.display = show ? 'grid' : 'none';
+          if(show){ try{ bd.classList.remove('animate-in'); void bd.offsetWidth; bd.classList.add('animate-in'); }catch(_e){} }
+          btn.textContent = show ? 'Ocultar detalle' : 'Ver detalle';
         });
-    </script>
+      }
+    }catch(e){}
+  })();
+  </script>
+  <script th:src="@{'https://maps.googleapis.com/maps/api/js?key=' + ${googleApiKey} + '&libraries=places&callback=initAutocomplete'}" async defer></script>
 </body>
 </html>
+
+
+
+
+
+
+
+

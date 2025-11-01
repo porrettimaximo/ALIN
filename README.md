@@ -73,13 +73,3 @@ Calcula automáticamente el **precio, distancia y ruta** en tiempo real mediante
 * API de Google Maps utilizada con fines **educativos**.
 * No gestiona transacciones reales ni reservas efectivas.
 
----
-
-##  Licencia
-
-Podés usarlo libremente.
-No recomendado para entornos productivos sin revisión técnica.
-
-```
-
-

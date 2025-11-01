@@ -1,9 +1,4 @@
-Perfecto ✅ Acá tenés la **versión profesional con badges y formato visual**, lista para copiar y pegar directamente en tu archivo `README.md` del repo **ALIN**.
-Incluye secciones limpias, estilo GitHub moderno y las imágenes que subiste (ajustadas a `/docs/Imagen1.jpg`, `/docs/Imagen2.jpg`, `/docs/Imagen3.jpg`).
 
----
-
-````markdown
 # 🚚 ALIN – Plataforma de Cotización y Seguimiento Logístico (DEMO)
 
 ![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)

@@ -44,41 +44,25 @@ Calcula automáticamente el **precio, distancia y ruta** en tiempo real mediante
 
 ---
 
-
-
-   * Nueva cotización.
-
-![Imagen de WhatsApp 2025-11-01 a las 10 32 10_ca3b6507](https://github.com/user-attachments/assets/cece72b3-eb95-4e17-a807-9cb1cdae1992)
-
-   * Cálculo de precio y distancia.
-   * Visualización del mapa con la ruta generada.
-
-![Imagen de WhatsApp 2025-11-01 a las 10 32 10_f72ddbb7](https://github.com/user-attachments/assets/b474a58d-167c-4711-bf2b-f2a21547411e)
-
-   * Seguimiento del envío con información de contacto simulada.
-
-![Imagen de WhatsApp 2025-11-01 a las 10 32 10_04a8fb24](https://github.com/user-attachments/assets/b2dace0f-5aae-45db-8ed8-91bb231bff1d)
-
----
-
-
-## 🧾 Vistas del sistema
+##  Vistas del sistema
 
 ### 🟩 Solicitud de cotización
 
-![Solicitud de cotización](./docs/Imagen1.jpg)
+
+![Imagen de WhatsApp 2025-11-01 a las 10 32 10_ca3b6507](https://github.com/user-attachments/assets/cece72b3-eb95-4e17-a807-9cb1cdae1992)
 
 ---
 
 ### 🟦 Cotización generada y ruta estimada
 
-![Cotización generada](./docs/Imagen2.jpg)
+
+![Imagen de WhatsApp 2025-11-01 a las 10 32 10_f72ddbb7](https://github.com/user-attachments/assets/b474a58d-167c-4711-bf2b-f2a21547411e)
 
 ---
 
 ### 🟧 Seguimiento del envío
 
-![Seguimiento del envío](./docs/Imagen3.jpg)
+![Imagen de WhatsApp 2025-11-01 a las 10 32 10_04a8fb24](https://github.com/user-attachments/assets/b2dace0f-5aae-45db-8ed8-91bb231bff1d)
 
 ---
 

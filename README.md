@@ -44,29 +44,7 @@ Calcula automáticamente el **precio, distancia y ruta** en tiempo real mediante
 
 ---
 
-## 🚀 Ejecución local
 
-1. **Clonar el repositorio:**
-   ```bash
-   git clone https://github.com/porrettimaximo/ALIN.git
-   cd ALIN
-   git checkout 19-07
-````
-
-2. **Compilar y ejecutar:**
-
-   ```bash
-   mvn clean install
-   mvn spring-boot:run
-   ```
-
-3. **Abrir el navegador en:**
-
-   ```
-   http://localhost:8080
-   ```
-
-4. **Probar las funciones principales:**
 
    * Nueva cotización.
 
@@ -113,36 +91,11 @@ Calcula automáticamente el **precio, distancia y ruta** en tiempo real mediante
 
 ---
 
-## 🧑‍💻 Autor
-
-**Máximo Porretti**
-Estudiante de Licenciatura en Sistemas – UNRN
-Desarrollador Full-Stack Jr.
-🔗 [GitHub: porrettimaximo](https://github.com/porrettimaximo)
-
----
-
 ## 📜 Licencia
 
-Este proyecto se distribuye bajo licencia **MIT**.
 Podés usarlo libremente con fines educativos o de portfolio.
 No recomendado para entornos productivos sin revisión técnica.
 
----
-
-> 💬 *ALIN – Simplificando la logística, un kilómetro a la vez.*
-
-```
-
----
-
-📌 **Instrucciones finales para tus imágenes:**
-
-Creá una carpeta en tu repo llamada `/docs` y poné ahí las imágenes que subiste, renombradas así:
-
 ```
 
 
-
-¿Querés que te haga también una **versión resumida tipo portfolio** (para poner en tu GitHub o CV, más corta y orientada a mostrar tus skills)?
-```

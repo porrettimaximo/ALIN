@@ -9,21 +9,21 @@
 ![Demo](https://img.shields.io/badge/STATUS-DEMO-blue?style=for-the-badge)
 ![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)
 
-> 🧩 **Versión demo** del proyecto **ALIN**, creada como concepto para una idea de un socio y demostración de desarrollo web full-stack.  
+>  **Versión demo** del proyecto **ALIN**, creada como concepto para una idea de un socio y demostración de desarrollo web full-stack.  
 > Esta demo ilustra el flujo completo de cotización, cálculo de ruta y seguimiento logístico.
 
 ---
 
-## 🧭 Descripción general
+## Descripción general
 
 **ALIN** (*Automated Logistics & INformation*) es una plataforma web que permite **simular cotizaciones y reservas de transporte de carga** entre distintas ciudades.  
 Calcula automáticamente el **precio, distancia y ruta** en tiempo real mediante la API de **Google Maps**, con una interfaz moderna, oscura y responsiva.
 
-> 🔍 Este proyecto fue desarrollado con fines de aprendizaje y presentación (no productivo).
+>  Este proyecto fue desarrollado con fines de aprendizaje y presentación (no productivo).
 
 ---
 
-## 💡 Objetivos del proyecto
+##  Objetivos del proyecto
 
 - Permitir la **cotización inmediata** de envíos según peso, volumen y destino.  
 - Calcular rutas, costos y tiempos estimados de entrega.  
@@ -32,7 +32,7 @@ Calcula automáticamente el **precio, distancia y ruta** en tiempo real mediante
 
 ---
 
-## ⚙️ Tecnologías utilizadas
+##  Tecnologías utilizadas
 
 | Capa | Tecnologías |
 |------|--------------|
@@ -46,27 +46,27 @@ Calcula automáticamente el **precio, distancia y ruta** en tiempo real mediante
 
 ##  Vistas del sistema
 
-### 🟩 Solicitud de cotización
+###  Solicitud de cotización
 
 
 ![Imagen de WhatsApp 2025-11-01 a las 10 32 10_ca3b6507](https://github.com/user-attachments/assets/cece72b3-eb95-4e17-a807-9cb1cdae1992)
 
 ---
 
-### 🟦 Cotización generada y ruta estimada
+###  Cotización generada y ruta estimada
 
 
 ![Imagen de WhatsApp 2025-11-01 a las 10 32 10_f72ddbb7](https://github.com/user-attachments/assets/b474a58d-167c-4711-bf2b-f2a21547411e)
 
 ---
 
-### 🟧 Seguimiento del envío
+### Seguimiento del envío
 
 ![Imagen de WhatsApp 2025-11-01 a las 10 32 10_04a8fb24](https://github.com/user-attachments/assets/b2dace0f-5aae-45db-8ed8-91bb231bff1d)
 
 ---
 
-## ⚠️ Limitaciones de la versión demo
+##  Limitaciones de la versión demo
 
 * No incluye autenticación real ni base de datos persistente.
 * Las tarifas y datos son **ficticios**.
@@ -75,7 +75,7 @@ Calcula automáticamente el **precio, distancia y ruta** en tiempo real mediante
 
 ---
 
-## 📜 Licencia
+##  Licencia
 
 Podés usarlo libremente con fines educativos o de portfolio.
 No recomendado para entornos productivos sin revisión técnica.

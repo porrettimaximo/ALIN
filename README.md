@@ -77,7 +77,7 @@ Calcula automáticamente el **precio, distancia y ruta** en tiempo real mediante
 
 ##  Licencia
 
-Podés usarlo libremente con fines educativos o de portfolio.
+Podés usarlo libremente.
 No recomendado para entornos productivos sin revisión técnica.
 
 ```

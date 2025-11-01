@@ -7,7 +7,7 @@
 ![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 ![Demo](https://img.shields.io/badge/STATUS-DEMO-blue?style=for-the-badge)
-![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)
+
 
 >  **Versión demo** del proyecto **ALIN**, creada como concepto para una idea de un socio y demostración de desarrollo web full-stack.  
 > Esta demo ilustra el flujo completo de cotización, cálculo de ruta y seguimiento logístico.

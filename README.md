@@ -9,7 +9,7 @@
 ![Demo](https://img.shields.io/badge/STATUS-DEMO-blue?style=for-the-badge)
 
 
->  **Versión demo** del proyecto **ALIN**, creada como concepto para una idea de un socio y demostración de desarrollo web full-stack.  
+>  **Versión demo** del proyecto **ALIN**, creada como concepto para una idea de un socio y demostración de desarrollo web.  
 > Esta demo ilustra el flujo completo de cotización, cálculo de ruta y seguimiento logístico.
 
 ---

@@ -9,7 +9,7 @@
 ![Demo](https://img.shields.io/badge/STATUS-DEMO-blue?style=for-the-badge)
 ![License](https://img.shields.io/badge/license-MIT-green?style=for-the-badge)
 
-> 🧩 **Versión demo** del proyecto **ALIN**, creada como ejercicio académico y demostración de desarrollo web full-stack.  
+> 🧩 **Versión demo** del proyecto **ALIN**, creada como concepto para una idea de un socio y demostración de desarrollo web full-stack.  
 > Esta demo ilustra el flujo completo de cotización, cálculo de ruta y seguimiento logístico.
 
 ---
@@ -69,21 +69,20 @@ Calcula automáticamente el **precio, distancia y ruta** en tiempo real mediante
 4. **Probar las funciones principales:**
 
    * Nueva cotización.
+
+![Imagen de WhatsApp 2025-11-01 a las 10 32 10_ca3b6507](https://github.com/user-attachments/assets/cece72b3-eb95-4e17-a807-9cb1cdae1992)
+
    * Cálculo de precio y distancia.
    * Visualización del mapa con la ruta generada.
+
+![Imagen de WhatsApp 2025-11-01 a las 10 32 10_f72ddbb7](https://github.com/user-attachments/assets/b474a58d-167c-4711-bf2b-f2a21547411e)
+
    * Seguimiento del envío con información de contacto simulada.
 
----
-
-## ✨ Funcionalidades destacadas
-
-✅ Cotización instantánea (peso, pallets, volumen, servicio urgente).
-✅ Ruta y distancia calculadas en tiempo real.
-✅ Seguimiento de envíos con estado dinámico.
-✅ Interfaz moderna en modo oscuro.
-✅ Precios claros y reserva inmediata.
+![Imagen de WhatsApp 2025-11-01 a las 10 32 10_04a8fb24](https://github.com/user-attachments/assets/b2dace0f-5aae-45db-8ed8-91bb231bff1d)
 
 ---
+
 
 ## 🧾 Vistas del sistema
 
@@ -143,12 +142,7 @@ Creá una carpeta en tu repo llamada `/docs` y poné ahí las imágenes que subi
 
 ```
 
-docs/
-├─ Imagen1.jpg   # Cotización inicial
-├─ Imagen2.jpg   # Resultado de cotización
-└─ Imagen3.jpg   # Seguimiento del envío
 
-```
 
 ¿Querés que te haga también una **versión resumida tipo portfolio** (para poner en tu GitHub o CV, más corta y orientada a mostrar tus skills)?
 ```
